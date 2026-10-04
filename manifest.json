@@ -18,5 +18,17 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+
+  "_documentacion": {
+    "name": "Nombre completo de la aplicación.",
+    "short_name": "Nombre corto de la aplicación.",
+    "description": "Descripción del sitio educativo.",
+    "start_url": "Página que se abre al iniciar la aplicación.",
+    "display": "Define cómo se muestra la aplicación.",
+    "background_color": "Color de fondo de la aplicación.",
+    "theme_color": "Color principal de la aplicación.",
+    "orientation": "Orientación de pantalla preferida.",
+    "icons": "Iconos utilizados para representar la aplicación."
+  }
 }
