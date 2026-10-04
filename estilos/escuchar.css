@@ -1,0 +1,46 @@
+/* =========================================================
+   Lector en voz alta (escuchar.js)
+   ========================================================= */
+
+.escuchar { position: fixed; right: 1rem; bottom: 1rem; z-index: 60; display: flex; flex-direction: column; align-items: flex-end; gap: 0.6rem; font-family: "Inter", system-ui, sans-serif; }
+
+.escuchar-fab {
+  width: 56px; height: 56px; border-radius: 50%; border: 0; cursor: pointer; font-size: 1.5rem; line-height: 1;
+  background: linear-gradient(135deg, #7b4fb0, #b6448f); color: #fff;
+  box-shadow: 0 10px 24px -6px rgba(36, 18, 66, 0.6); transition: transform 0.15s ease;
+}
+.escuchar-fab:hover { transform: scale(1.07); }
+.escuchar-fab:focus-visible, .escuchar button:focus-visible, .escuchar select:focus-visible { outline: 3px solid #e2a13d; outline-offset: 2px; }
+.escuchar.sonando .escuchar-fab { animation: pulso 1.6s ease-in-out infinite; }
+@keyframes pulso { 0%, 100% { box-shadow: 0 0 0 0 rgba(182, 68, 143, 0.55); } 50% { box-shadow: 0 0 0 14px rgba(182, 68, 143, 0); } }
+
+.escuchar-panel {
+  width: min(320px, calc(100vw - 2rem)); background: #fff; color: #241242; border-radius: 18px;
+  border: 1px solid #e4d9ef; box-shadow: 0 22px 50px -16px rgba(36, 18, 66, 0.55); padding: 1rem 1.1rem 1.1rem;
+}
+.escuchar-panel[hidden] { display: none; }
+.escuchar-titulo { margin: 0; font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 1.05rem; }
+.escuchar-estado { margin: 0.2rem 0 0.8rem; font-size: 0.85rem; color: #4b3a68; min-height: 1.3em; }
+.escuchar-botones { display: flex; gap: 0.5rem; justify-content: center; }
+.escuchar-botones button {
+  flex: 1; height: 46px; border-radius: 12px; border: 1px solid #e4d9ef; background: #faf8fc; cursor: pointer;
+  font-size: 1.15rem; color: #5c3888;
+}
+.escuchar-botones button:hover { background: #f1eaf8; }
+.escuchar-botones button.principal { background: #7b4fb0; color: #fff; border-color: #7b4fb0; flex: 1.4; }
+.escuchar-vel { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; margin-top: 0.9rem; font-size: 0.85rem; }
+.escuchar-vel select { font: inherit; padding: 0.35rem 0.5rem; border-radius: 8px; border: 1px solid #e4d9ef; background: #faf8fc; color: #241242; }
+.escuchar-ayuda { margin: 0.8rem 0 0; font-size: 0.78rem; color: #4b3a68; line-height: 1.45; }
+
+/* Párrafo que se está leyendo */
+.leyendo { background: rgba(226, 161, 61, 0.3) !important; box-shadow: 0 0 0 6px rgba(226, 161, 61, 0.3); border-radius: 6px; transition: background 0.2s ease; }
+
+/* Cuando el panel está abierto, los textos se pueden tocar para escuchar desde ahí */
+body.modo-escucha main :is(h2, h3, p, li, td, th, .etiqueta, .anio):hover { cursor: pointer; background: rgba(123, 79, 176, 0.08); border-radius: 6px; }
+
+@media (max-width: 600px) {
+  .escuchar { right: 0.7rem; bottom: 0.7rem; }
+  .escuchar-fab { width: 52px; height: 52px; }
+}
+@media print { .escuchar { display: none; } }
+@media (prefers-reduced-motion: reduce) { .escuchar.sonando .escuchar-fab { animation: none; } }

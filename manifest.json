@@ -19,7 +19,6 @@
       "type": "image/png"
     }
   ],
-
   "_documentacion": {
     "name": "Nombre completo de la aplicación.",
     "short_name": "Nombre corto de la aplicación.",
@@ -29,6 +28,10 @@
     "background_color": "Color de fondo de la aplicación.",
     "theme_color": "Color principal de la aplicación.",
     "orientation": "Orientación de pantalla preferida.",
-    "icons": "Iconos utilizados para representar la aplicación."
-  }
+    "icons": "Iconos utilizados para representar la aplicación.",
+    "scope": "Alcance de la aplicación: todo lo que está dentro de esta carpeta.",
+    "lang": "Idioma principal de la aplicación."
+  },
+  "scope": "./",
+  "lang": "es"
 }
