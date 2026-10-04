@@ -1,0 +1,8 @@
+CÓMO PROBAR LA APLICACIÓN PHP (XAMPP)
+1. Copia toda la carpeta del proyecto (ia-cbtis260) dentro de C:\xampp\htdocs\
+2. Abre el panel de XAMPP y enciende Apache y MySQL.
+3. Entra a http://localhost/phpmyadmin → pestaña "Importar" → elige glosario/sql/glosario.sql → Continuar.
+   (crea la base ia_glosario, la tabla glosario y los 15 registros del Word)
+4. Abre http://localhost/ia-cbtis260/glosario/index.php  (ver registros)
+   y http://localhost/ia-cbtis260/glosario/agregar.php  (agregar uno nuevo)
+Si tu MySQL tiene contraseña, cámbiala en conexion.php.
