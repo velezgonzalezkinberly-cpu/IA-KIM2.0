@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio | Inteligencia Artificial · CBTIS 260</title>
+    <meta name="description" content="Sitio educativo sobre Inteligencia Artificial del CBTIS 260.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="estilos/estilos.css">
+    <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#241242">
+</head>
+<script>
+    if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+            navigator.serviceWorker.register("service-worker.js")
+                .then(() => console.log("PWA activada"))
+                .catch(error => console.log("Error:", error));
+        });
+    }
+</script>
+<body>
+
+    <!-- ENCABEZADO -->
+    <header>
+        <div class="encabezado">
+            <img class="logo-marca" src="imagenes/logo-cbtis260.png" alt="Logo CBTIS 260" width="68" height="68">
+            <div>
+                <h1>Inteligencia Artificial</h1>
+                <p class="subt">Centro de Bachillerato Tecnológico Industrial y de Servicios No. 260</p>
+                <p class="lema">Educación tecnológica para transformar el futuro</p>
+            </div>
+        </div>
+
+        <nav>
+            <input type="checkbox" id="nav-toggle" class="nav-toggle">
+            <label for="nav-toggle" class="hamburger">☰ Menú</label>
+
+            <div class="nav-lista">
+                <a href="index.html" class="activo">🏠 Inicio</a>
+
+                <div class="menu">
+                    <span class="menu-etiqueta">🤖 Tema IA</span>
+                    <div class="submenu">
+                        <a href="que-es.html">¿Qué es la IA?</a>
+                        <a href="tipos.html">Tipos de IA</a>
+                        <a href="antecedentes.html">Antecedentes</a>
+                        <a href="aplicaciones.html">Aplicaciones</a>
+                        <a href="ventajas.html">Ventajas</a>
+                        <a href="desventajas.html">Desventajas</a>
+                        <a href="impacto.html">Impacto</a>
+                        <a href="consecuencias.html">Consecuencias</a>
+                        <a href="etica.html">Ética y retos</a>
+                        <a href="programacion.html">Programación</a>
+                    </div>
+                </div>
+
+                <a href="glosario.html">📚 Glosario</a>
+                <a href="video.html">🎥 Video</a>
+                <a href="contacto.html">ℹ️ Información</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+
+        <section class="seccion inicio">
+            <div class="inicio-texto">
+                <h2>Bienvenidos a nuestra página sobre IA</h2>
+                <p>
+                    La Inteligencia Artificial es una tecnología que permite a las
+                    computadoras y otros dispositivos realizar tareas que normalmente
+                    requieren inteligencia humana, como aprender, reconocer imágenes,
+                    comprender textos y tomar decisiones.
+                </p>
+                <p>
+                    Usa el menú de arriba para recorrer las secciones: qué es la IA,
+                    sus tipos, antecedentes, aplicaciones, ventajas, desventajas,
+                    impacto, consecuencias, ética y programación.
+                </p>
+            </div>
+            <svg class="ilustracion-hero" viewBox="0 0 520 420" role="img" aria-label="Ilustración de una red neuronal sobre un circuito">
+    <rect x="0" y="0" width="520" height="420" rx="16" fill="#eef2f1"/>
+    <g stroke="#d7dde0" stroke-width="1">
+        <line x1="0" y1="70" x2="520" y2="70"/>
+        <line x1="0" y1="140" x2="520" y2="140"/>
+        <line x1="0" y1="280" x2="520" y2="280"/>
+        <line x1="0" y1="350" x2="520" y2="350"/>
+        <line x1="130" y1="0" x2="130" y2="420"/>
+        <line x1="390" y1="0" x2="390" y2="420"/>
+    </g>
+    <g fill="none" stroke="#2f9e94" stroke-width="2">
+        <line x1="120" y1="120" x2="260" y2="80"/>
+        <line x1="120" y1="120" x2="260" y2="210"/>
+        <line x1="120" y1="300" x2="260" y2="210"/>
+        <line x1="120" y1="300" x2="260" y2="340"/>
+        <line x1="260" y1="80" x2="400" y2="150"/>
+        <line x1="260" y1="210" x2="400" y2="150"/>
+        <line x1="260" y1="210" x2="400" y2="270"/>
+        <line x1="260" y1="340" x2="400" y2="270"/>
+    </g>
+    <g fill="#1c2431">
+        <circle cx="120" cy="120" r="9"/>
+        <circle cx="120" cy="300" r="9"/>
+        <circle cx="260" cy="80" r="9"/>
+        <circle cx="260" cy="210" r="11"/>
+        <circle cx="260" cy="340" r="9"/>
+        <circle cx="400" cy="150" r="9"/>
+        <circle cx="400" cy="270" r="9"/>
+    </g>
+    <circle cx="260" cy="210" r="11" fill="#e2a13d"/>
+</svg>
+        </section>
+
+    </main>
+
+    <div class="paginacion">
+        <a class="siguiente" href="que-es.html"><span class="rotulo">Siguiente →</span><span class="destino">¿Qué es la IA?</span></a>
+    </div>
+
+    <!-- PIE DE PÁGINA -->
+    <footer>
+        <p>© CBTIS 260</p>
+        <p>Kinberly Vélez González</p>
+        <div class="redes">
+            <a href="#" aria-label="Facebook">f</a>
+            <a href="#" aria-label="Instagram">◎</a>
+            <a href="#" aria-label="YouTube">▶</a>
+        </div>
+    </footer>
+
+</body>
+</html>
