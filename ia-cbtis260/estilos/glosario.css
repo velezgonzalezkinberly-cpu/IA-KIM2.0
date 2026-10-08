@@ -1,0 +1,95 @@
+/* =========================================================
+   GLOSARIO · estilos propios de Kinberly
+   ========================================================= */
+
+
+.glo-herramientas {
+  display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center; justify-content: space-between;
+  margin: 0 0 1.6rem;
+}
+.glo-buscar {
+  flex: 1 1 260px; display: flex; align-items: center; gap: 0.6rem;
+  background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 0.35rem 1rem;
+  box-shadow: var(--sombra);
+}
+.glo-buscar input { flex: 1; border: 0; outline: 0; font: inherit; color: var(--ink); background: transparent; padding: 0.45rem 0; }
+.glo-buscar:focus-within { border-color: var(--teal); }
+
+.boton {
+  display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; text-decoration: none;
+  border: 0; border-radius: 999px; padding: 0.7rem 1.3rem; font: inherit; font-weight: 600; font-size: 0.92rem;
+  background: linear-gradient(135deg, var(--teal), var(--violeta)); color: #fff; box-shadow: var(--sombra);
+  transition: transform 0.15s ease;
+}
+.boton:hover { transform: translateY(-2px); }
+.boton.suave { background: #fff; color: var(--teal-dark); border: 1px solid var(--line); }
+
+.glo-contador { font-size: 0.9rem; color: var(--ink-soft); margin: 0 0 1rem; }
+
+.glo-rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 1.6rem; }
+
+.glo-tarjeta {
+  background: #fff; border-radius: var(--radius); box-shadow: var(--sombra); overflow: hidden;
+  display: flex; flex-direction: column; border: 1px solid var(--line);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.glo-tarjeta:hover { transform: translateY(-5px); box-shadow: 0 24px 44px -20px rgba(36,18,66,0.4); }
+
+.glo-foto { position: relative; aspect-ratio: 16 / 10; background: var(--paper-alt); overflow: hidden; }
+.glo-foto img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+.glo-tarjeta:hover .glo-foto img { transform: scale(1.06); }
+.glo-id {
+  position: absolute; top: 0.8rem; left: 0.8rem; min-width: 2.2rem; height: 2.2rem; padding: 0 0.6rem;
+  display: flex; align-items: center; justify-content: center; border-radius: 999px;
+  background: var(--ink); color: var(--amber); font-family: "Fraunces", serif; font-weight: 700; font-size: 0.95rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+.glo-cuerpo { padding: 1.3rem 1.4rem 1.5rem; display: flex; flex-direction: column; flex: 1; }
+.glo-cuerpo h3 { margin-bottom: 0.5rem; color: var(--teal-dark); }
+.glo-cuerpo p { font-size: 0.93rem; margin: 0 0 1.1rem; }
+.glo-escuchar {
+  margin-top: auto; align-self: flex-start; display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer;
+  border: 1px solid var(--line); background: var(--paper); color: var(--teal-dark);
+  border-radius: 999px; padding: 0.45rem 1rem; font: inherit; font-size: 0.85rem; font-weight: 600;
+}
+.glo-escuchar:hover { background: var(--paper-alt); }
+.glo-escuchar.sonando { background: var(--teal); color: #fff; border-color: var(--teal); }
+
+.glo-vacio { text-align: center; padding: 3rem 1rem; color: var(--ink-soft); }
+
+/* Tabla (vista de la práctica) */
+.glo-tabla-caja { overflow-x: auto; background: #fff; border-radius: var(--radius); box-shadow: var(--sombra); border: 1px solid var(--line); }
+.glo-tabla { width: 100%; border-collapse: collapse; font-size: 0.92rem; min-width: 680px; }
+.glo-tabla th { background: var(--ink); color: #fff; text-align: left; padding: 0.9rem 1rem; font-weight: 600; }
+.glo-tabla td { padding: 0.9rem 1rem; border-top: 1px solid var(--line); vertical-align: top; color: var(--ink-soft); }
+.glo-tabla tr:nth-child(even) td { background: var(--paper); }
+.glo-tabla td:first-child { font-family: "Fraunces", serif; font-weight: 700; color: var(--amber-dark); }
+.glo-tabla td strong { color: var(--ink); }
+.glo-tabla img { width: 96px; height: 64px; object-fit: cover; border-radius: 8px; }
+
+/* Formulario PHP */
+.formulario { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--sombra); padding: 2rem; max-width: 720px; }
+.campo { margin-bottom: 1.3rem; }
+.campo label { display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--ink); }
+.campo small { display: block; color: var(--ink-soft); margin-top: 0.3rem; }
+.campo input[type=text], .campo textarea, .campo input[type=file] {
+  width: 100%; font: inherit; color: var(--ink); background: var(--paper);
+  border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 0.75rem 0.9rem;
+}
+.campo textarea { min-height: 150px; resize: vertical; }
+.campo input:focus, .campo textarea:focus { outline: 2px solid var(--teal); border-color: transparent; }
+.aviso { border-radius: var(--radius-sm); padding: 0.9rem 1.1rem; margin-bottom: 1.4rem; font-size: 0.95rem; }
+.aviso.ok { background: #e7f6ee; color: #1d6b43; border: 1px solid #b5e2c8; }
+.aviso.error { background: #fdecea; color: #912d22; border: 1px solid #f2c0ba; }
+.aviso ul { margin: 0.3rem 0 0 1.1rem; padding: 0; }
+.acciones-form { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.5rem; }
+
+/* Detalles extra de las tarjetas del glosario */
+.glo-cat { align-self: flex-start; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--violeta-dark); background: #f9e6f2; border-radius: 999px; padding: 0.15rem 0.7rem; margin-bottom: 0.6rem; }
+.glo-ejemplo { background: var(--paper); border-left: 3px solid var(--amber); border-radius: 6px; padding: 0.55rem 0.8rem; }
+.glo-ejemplo strong { color: var(--amber-dark); }
+@media (max-width: 600px) {
+  .glo-herramientas > * { flex: 1 1 100%; }
+  .glo-herramientas .boton { justify-content: center; }
+  .formulario { padding: 1.3rem; }
+}
