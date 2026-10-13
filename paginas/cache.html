@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caché | Inteligencia Artificial · CBTIS 260</title>
+    <meta name="description" content="Documentación de la memoria caché y la API Cache de la PWA.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../estilos/estilos.css">
+    <link rel="stylesheet" href="../estilos/escuchar.css">
+    <link rel="stylesheet" href="../estilos/cache.css">
+    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#241242">
+    <link rel="icon" href="../imagenes/logo-cbtis260.png">
+</head>
+<body>
+
+    <!-- ENCABEZADO -->
+    <header>
+        <div class="encabezado">
+            <img class="logo-marca" src="../imagenes/logo-cbtis260.png" alt="Logo CBTIS 260" width="68" height="68">
+            <div>
+                <h1>Inteligencia Artificial</h1>
+                <p class="subt">Centro de Bachillerato Tecnológico Industrial y de Servicios No. 260</p>
+                <p class="lema">Educación tecnológica para transformar el futuro</p>
+            </div>
+        </div>
+
+        <nav>
+            <input type="checkbox" id="nav-toggle" class="nav-toggle">
+            <label for="nav-toggle" class="hamburger">☰ Menú</label>
+
+            <div class="nav-lista">
+                <a href="../index.html">🏠 Inicio</a>
+
+                <div class="menu">
+                    <span class="menu-etiqueta">🤖 Tema IA</span>
+                    <div class="submenu">
+                        <a href="que-es.html">¿Qué es la IA?</a>
+                        <a href="tipos.html">Tipos de IA</a>
+                        <a href="antecedentes.html">Antecedentes</a>
+                        <a href="aplicaciones.html">Aplicaciones</a>
+                        <a href="ventajas.html">Ventajas</a>
+                        <a href="desventajas.html">Desventajas</a>
+                        <a href="impacto.html">Impacto</a>
+                        <a href="consecuencias.html">Consecuencias</a>
+                        <a href="etica.html">Ética y retos</a>
+                        <a href="programacion.html">Programación</a>
+                    </div>
+                </div>
+
+                <a href="glosario.html">📚 Glosario</a>
+                <a href="video.html">🎥 Video</a>
+                <a href="contacto.html">ℹ️ Información</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+
+        <section class="banner">
+            <div class="contenedor">
+                <svg class="icono-banner" viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="2">
+  <ellipse cx="32" cy="16" rx="18" ry="8"/>
+  <path d="M14 16v16c0 4.4 8 8 18 8s18-3.6 18-8V16"/>
+  <path d="M14 32v16c0 4.4 8 8 18 8s18-3.6 18-8V32"/>
+</svg>
+                <div>
+                    <h2>Memoria caché y API Cache</h2>
+                    <p>Cómo guarda la PWA sus archivos para funcionar sin Internet.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="seccion">
+            <p>
+                Esta aplicación usa un <strong>service worker</strong> (archivo <code>service-worker.js</code>)
+                que se coloca entre la página y el Internet. Para poder abrir el sitio sin conexión guarda archivos
+                en dos cachés distintos, ambos creados con la <strong>Cache API</strong> del navegador.
+            </p>
+
+            <div class="cache-grid">
+                <div class="cache-caja">
+                    <span class="cache-etiqueta">Memoria caché · estático</span>
+                    <h3>ia-cbtis260-estatico-v4</h3>
+                    <p>Guarda los archivos propios de la aplicación (páginas, CSS, JavaScript, imágenes). Se llena
+                       en el evento <code>install</code> con <code>cache.addAll()</code>, así que todo queda disponible desde la primera visita.</p>
+                </div>
+                <div class="cache-caja">
+                    <span class="cache-etiqueta dinamico">API Cache · dinámico</span>
+                    <h3>ia-cbtis260-dinamico-v4</h3>
+                    <p>Guarda lo que se va pidiendo mientras se navega y no estaba en la lista: fuentes de Google,
+                       archivos nuevos, etc. Se llena en el evento <code>fetch</code> con <code>cache.put()</code> y tiene un límite de 40 archivos.</p>
+                </div>
+            </div>
+
+            <h3 class="subtitulo-seccion">Estrategias que se usan</h3>
+            <div class="tabla-scroll">
+            <table class="cache-tabla">
+                <tr><th>Tipo de archivo</th><th>Estrategia</th><th>Dónde se guarda</th></tr>
+                <tr><td>Archivos de mi sitio (HTML, CSS, JS, imágenes)</td><td><em>Stale-while-revalidate</em>: respondo con lo guardado y actualizo en segundo plano.</td><td>Memoria caché (estático)</td></tr>
+                <tr><td>Archivos de otros sitios (Google Fonts)</td><td><em>Cache first</em>: si ya está guardado lo uso; si no, lo pido y lo guardo.</td><td>API Cache (dinámico)</td></tr>
+                <tr><td>Archivos nuevos de mi sitio que no están en la lista</td><td>Se piden a la red y se guarda una copia.</td><td>API Cache (dinámico)</td></tr>
+                <tr><td>Sin Internet y sin copia guardada</td><td>Se muestra <code>index.html</code> u <code>offline.html</code>.</td><td>—</td></tr>
+                <tr><td>Carpeta <code>php/</code> y peticiones que no son GET</td><td>No se guardan (necesitan servidor y base de datos).</td><td>—</td></tr>
+            </table>
+            </div>
+
+            <h3 class="subtitulo-seccion">Eventos del service worker</h3>
+            <ol class="pasos">
+                <li><h3>install</h3><p>Se abre el caché estático con <code>caches.open()</code> y se guardan todos los archivos de la lista con <code>cache.addAll()</code>.</p></li>
+                <li><h3>activate</h3><p>Con <code>caches.keys()</code> y <code>caches.delete()</code> se borran los cachés de versiones anteriores para no acumular archivos viejos.</p></li>
+                <li><h3>fetch</h3><p>Cada solicitud pasa por aquí: se busca con <code>caches.match()</code> y, si hace falta, se pide a la red y se guarda con <code>cache.put()</code>.</p></li>
+                <li><h3>message</h3><p>La página puede mandar órdenes al service worker, por ejemplo <code>LIMPIAR_DINAMICO</code> o <code>LIMPIAR_TODO</code>.</p></li>
+            </ol>
+
+            <h3 class="subtitulo-seccion">Métodos de la Cache API</h3>
+            <div class="tabla-scroll">
+            <table class="cache-tabla">
+                <tr><th>Método</th><th>Para qué sirve</th></tr>
+                <tr><td><code>caches.open(nombre)</code></td><td>Abre un caché o lo crea si no existe.</td></tr>
+                <tr><td><code>caches.keys()</code></td><td>Devuelve los nombres de todos los cachés.</td></tr>
+                <tr><td><code>caches.match(peticion)</code></td><td>Busca una respuesta en todos los cachés.</td></tr>
+                <tr><td><code>caches.delete(nombre)</code></td><td>Elimina un caché completo.</td></tr>
+                <tr><td><code>cache.add(url)</code> / <code>cache.addAll(lista)</code></td><td>Descarga y guarda uno o varios archivos.</td></tr>
+                <tr><td><code>cache.put(peticion, respuesta)</code></td><td>Guarda una respuesta que ya tengo.</td></tr>
+                <tr><td><code>cache.match(peticion)</code></td><td>Busca una respuesta en ese caché.</td></tr>
+                <tr><td><code>cache.keys()</code></td><td>Lista los archivos guardados en ese caché.</td></tr>
+                <tr><td><code>cache.delete(peticion)</code></td><td>Borra un archivo del caché.</td></tr>
+            </table>
+            </div>
+
+            <h3 class="subtitulo-seccion">Panel en vivo</h3>
+            <p>Este panel lee los cachés reales de tu navegador. Para que funcione, abre el sitio con <code>http://localhost</code> o HTTPS y recarga una vez.</p>
+
+            <div id="cache-panel" data-no-leer>
+                <div class="cache-estado" id="cache-estado"></div>
+
+                <div class="cache-acciones">
+                    <button class="boton-mini" type="button" id="cache-actualizar">🔄 Actualizar</button>
+                    <button class="boton-mini" type="button" id="cache-demo">🧪 Probar API Cache</button>
+                    <button class="boton-mini" type="button" id="cache-vaciar-dinamico">🧹 Vaciar API Cache</button>
+                    <button class="boton-mini" type="button" id="cache-vaciar-todo">🗑️ Borrar todos los cachés</button>
+                </div>
+
+                <div class="cache-acciones">
+                    <label for="cache-pagina">Guardar página en el caché dinámico:</label>
+                    <select id="cache-pagina">
+                        <option value="que-es.html">¿Qué es la IA?</option>
+                        <option value="tipos.html">Tipos de IA</option>
+                        <option value="glosario.html">Glosario</option>
+                        <option value="video.html">Video</option>
+                    </select>
+                    <button class="boton-mini" type="button" id="cache-guardar">💾 Guardar</button>
+                </div>
+
+                <div class="cache-lista" id="cache-lista"></div>
+                <h4>Resultado</h4>
+                <div class="cache-salida" id="cache-salida">Pulsa «Probar API Cache» para guardar y leer un dato.</div>
+            </div>
+
+            <h3 class="subtitulo-seccion">Cómo comprobarlo en el navegador</h3>
+            <ol class="pasos">
+                <li><h3>Ver los cachés</h3><p>En Chrome abre DevTools (F12) → pestaña <strong>Application</strong> → <strong>Cache storage</strong>. Ahí aparecen los dos cachés con sus archivos.</p></li>
+                <li><h3>Probar sin Internet</h3><p>En <strong>Application → Service Workers</strong> activa la casilla <strong>Offline</strong> y recarga: el sitio debe abrir igual.</p></li>
+                <li><h3>Forzar una actualización</h3><p>Cambia <code>VERSION</code> en <code>service-worker.js</code> (v4 → v5). Al recargar se crean los cachés nuevos y se borran los viejos.</p></li>
+            </ol>
+
+            <p>La documentación completa en texto está en el archivo <code>DOCUMENTACION-CACHE.md</code> del proyecto.</p>
+        </section>
+
+    </main>
+
+    <div class="paginacion">
+        <a class="anterior" href="video.html"><span class="rotulo">← Anterior</span><span class="destino">Video</span></a>
+        <a class="siguiente" href="../index.html"><span class="rotulo">Volver al</span><span class="destino">Inicio</span></a>
+    </div>
+
+    <!-- PIE DE PÁGINA -->
+    <footer>
+        <p>© CBTIS 260</p>
+        <p>Kinberly Vélez González</p>
+        <div class="redes">
+            <a href="mailto:velezgonzalezkinberly@gmail.com" aria-label="Gmail: velezgonzalezkinberly" title="Gmail" class="red-gmail">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7l8.5 6.5L20.5 7"/></svg>
+            </a>
+            <a href="https://www.instagram.com/kim_gvglz/" target="_blank" rel="noopener" aria-label="Instagram: kim_gvglz" title="Instagram" class="red-instagram">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>
+            </a>
+        </div>
+    </footer>
+
+    <script src="../escuchar.js"></script>
+    <script src="../cache-panel.js"></script>
+    <script src="../pwa.js"></script>
+</body>
+</html>

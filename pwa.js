@@ -1,6 +1,10 @@
 /* =========================================================
    pwa.js · Registro del Service Worker y detalles de la PWA
    Este archivo está en la raíz, junto a index.html y manifest.json.
+   El service worker que se registra aquí crea dos cachés:
+     · Memoria caché (estático): ia-cbtis260-estatico-vX
+     · API Cache (dinámico):     ia-cbtis260-dinamico-vX
+   La explicación completa está en DOCUMENTACION-CACHE.md.
    ========================================================= */
 (function () {
     "use strict";
@@ -13,7 +17,11 @@
         window.addEventListener("load", () => {
             navigator.serviceWorker
                 .register(new URL("service-worker.js", raiz).href)
-                .then(() => console.log("PWA activada"))
+                .then(registro => {
+                    console.log("PWA activada");
+                    // Si hay una versión nueva esperando, le pido que se active de inmediato.
+                    if (registro.waiting) registro.waiting.postMessage({ accion: "ACTIVAR" });
+                })
                 .catch(error => console.log("Error:", error));
         });
     }
