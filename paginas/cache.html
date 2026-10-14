@@ -53,6 +53,7 @@
 
                 <a href="glosario.html">📚 Glosario</a>
                 <a href="video.html">🎥 Video</a>
+                <a href="modelo.html">🧠 Modelo</a>
                 <a href="contacto.html">ℹ️ Información</a>
             </div>
         </nav>
@@ -78,21 +79,42 @@
             <p>
                 Esta aplicación usa un <strong>service worker</strong> (archivo <code>service-worker.js</code>)
                 que se coloca entre la página y el Internet. Para poder abrir el sitio sin conexión guarda archivos
-                en dos cachés distintos, ambos creados con la <strong>Cache API</strong> del navegador.
+                en <strong>cinco cachés</strong> distintos, cada uno con su propio método, todos creados con la <strong>Cache API</strong> del navegador.
             </p>
 
             <div class="cache-grid">
                 <div class="cache-caja">
                     <span class="cache-etiqueta">Memoria caché · estático</span>
-                    <h3>ia-cbtis260-estatico-v4</h3>
+                    <h3>ia-cbtis260-estatico-v5</h3>
                     <p>Guarda los archivos propios de la aplicación (páginas, CSS, JavaScript, imágenes). Se llena
                        en el evento <code>install</code> con <code>cache.addAll()</code>, así que todo queda disponible desde la primera visita.</p>
                 </div>
                 <div class="cache-caja">
                     <span class="cache-etiqueta dinamico">API Cache · dinámico</span>
-                    <h3>ia-cbtis260-dinamico-v4</h3>
+                    <h3>ia-cbtis260-dinamico-v5</h3>
                     <p>Guarda lo que se va pidiendo mientras se navega y no estaba en la lista: fuentes de Google,
                        archivos nuevos, etc. Se llena en el evento <code>fetch</code> con <code>cache.put()</code> y tiene un límite de 40 archivos.</p>
+                </div>
+            </div>
+
+            <div class="cache-grid">
+                <div class="cache-caja">
+                    <span class="cache-etiqueta">Método 3 · Cache First</span>
+                    <h3>ia-cbtis260-modelo-v5</h3>
+                    <p>Guarda el <strong>modelo de IA</strong> (<code>modelo/</code>) y las bibliotecas TensorFlow.js (<code>lib/</code>). Pesan unos 3 MB y casi nunca cambian,
+                       así que primero se busca en el caché y solo se va a Internet si no está. Por eso el modelo funciona sin conexión.</p>
+                </div>
+                <div class="cache-caja">
+                    <span class="cache-etiqueta dinamico">Método 4 · Network First</span>
+                    <h3>ia-cbtis260-paginas-v5</h3>
+                    <p>Cada página HTML que se abre se pide primero a la red, para ver siempre lo más nuevo, y se guarda una copia.
+                       Si la red tarda más de 3.5 segundos o no hay Internet, se muestra la última copia guardada.</p>
+                </div>
+                <div class="cache-caja">
+                    <span class="cache-etiqueta">Método 5 · Cache First con caducidad</span>
+                    <h3>ia-cbtis260-imagenes-v5</h3>
+                    <p>Guarda las imágenes que no estaban en la lista inicial (por ejemplo las subidas desde PHP). Cada copia lleva su fecha,
+                       caduca a los 7 días y hay un máximo de 30 imágenes.</p>
                 </div>
             </div>
 
@@ -100,7 +122,10 @@
             <div class="tabla-scroll">
             <table class="cache-tabla">
                 <tr><th>Tipo de archivo</th><th>Estrategia</th><th>Dónde se guarda</th></tr>
-                <tr><td>Archivos de mi sitio (HTML, CSS, JS, imágenes)</td><td><em>Stale-while-revalidate</em>: respondo con lo guardado y actualizo en segundo plano.</td><td>Memoria caché (estático)</td></tr>
+                <tr><td>Modelo (<code>modelo/</code>) y bibliotecas (<code>lib/</code>)</td><td><em>Cache First</em>: si está guardado lo entrego; si no, lo pido y lo guardo.</td><td>Caché del modelo</td></tr>
+                <tr><td>Páginas HTML que se abren (navegación)</td><td><em>Network First</em> con tiempo límite de 3.5 s: red primero, copia guardada si falla.</td><td>Caché de páginas</td></tr>
+                <tr><td>Imágenes que no están en la lista inicial</td><td><em>Cache First con caducidad</em>: copia vigente (menos de 7 días) o se vuelve a pedir.</td><td>Caché de imágenes</td></tr>
+                <tr><td>Archivos de mi sitio (CSS, JS, datos)</td><td><em>Stale-while-revalidate</em>: respondo con lo guardado y actualizo en segundo plano.</td><td>Memoria caché (estático)</td></tr>
                 <tr><td>Archivos de otros sitios (Google Fonts)</td><td><em>Cache first</em>: si ya está guardado lo uso; si no, lo pido y lo guardo.</td><td>API Cache (dinámico)</td></tr>
                 <tr><td>Archivos nuevos de mi sitio que no están en la lista</td><td>Se piden a la red y se guarda una copia.</td><td>API Cache (dinámico)</td></tr>
                 <tr><td>Sin Internet y sin copia guardada</td><td>Se muestra <code>index.html</code> u <code>offline.html</code>.</td><td>—</td></tr>
@@ -113,7 +138,7 @@
                 <li><h3>install</h3><p>Se abre el caché estático con <code>caches.open()</code> y se guardan todos los archivos de la lista con <code>cache.addAll()</code>.</p></li>
                 <li><h3>activate</h3><p>Con <code>caches.keys()</code> y <code>caches.delete()</code> se borran los cachés de versiones anteriores para no acumular archivos viejos.</p></li>
                 <li><h3>fetch</h3><p>Cada solicitud pasa por aquí: se busca con <code>caches.match()</code> y, si hace falta, se pide a la red y se guarda con <code>cache.put()</code>.</p></li>
-                <li><h3>message</h3><p>La página puede mandar órdenes al service worker, por ejemplo <code>LIMPIAR_DINAMICO</code> o <code>LIMPIAR_TODO</code>.</p></li>
+                <li><h3>message</h3><p>La página puede mandar órdenes al service worker, por ejemplo <code>LIMPIAR_DINAMICO</code>, <code>LIMPIAR_MODELO</code>, <code>LIMPIAR_PAGINAS</code>, <code>LIMPIAR_IMAGENES</code> o <code>LIMPIAR_TODO</code>.</p></li>
             </ol>
 
             <h3 class="subtitulo-seccion">Métodos de la Cache API</h3>
@@ -163,9 +188,9 @@
 
             <h3 class="subtitulo-seccion">Cómo comprobarlo en el navegador</h3>
             <ol class="pasos">
-                <li><h3>Ver los cachés</h3><p>En Chrome abre DevTools (F12) → pestaña <strong>Application</strong> → <strong>Cache storage</strong>. Ahí aparecen los dos cachés con sus archivos.</p></li>
+                <li><h3>Ver los cachés</h3><p>En Chrome abre DevTools (F12) → pestaña <strong>Application</strong> → <strong>Cache storage</strong>. Ahí aparecen los cinco cachés con sus archivos.</p></li>
                 <li><h3>Probar sin Internet</h3><p>En <strong>Application → Service Workers</strong> activa la casilla <strong>Offline</strong> y recarga: el sitio debe abrir igual.</p></li>
-                <li><h3>Forzar una actualización</h3><p>Cambia <code>VERSION</code> en <code>service-worker.js</code> (v4 → v5). Al recargar se crean los cachés nuevos y se borran los viejos.</p></li>
+                <li><h3>Forzar una actualización</h3><p>Cambia <code>VERSION</code> en <code>service-worker.js</code> (v5 → v6). Al recargar se crean los cachés nuevos y se borran los viejos.</p></li>
             </ol>
 
             <p>La documentación completa en texto está en el archivo <code>DOCUMENTACION-CACHE.md</code> del proyecto.</p>

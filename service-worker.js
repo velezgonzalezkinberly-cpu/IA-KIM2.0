@@ -21,20 +21,67 @@
         cache.match(), cache.keys(), cache.delete() y caches.keys().
       - Tiene un límite (LIMITE_DINAMICO) para no llenar el almacenamiento.
 
-   3) FALLBACK OFFLINE
+   3) CACHÉ DEL MODELO · método CACHE FIRST
+      - Es el caché "ia-cbtis260-modelo-vX".
+      - Guarda el modelo de Teachable Machine (carpeta modelo/) y las
+        bibliotecas TensorFlow.js (carpeta lib/). Pesan varios MB y casi
+        nunca cambian, así que primero busco en el caché y solo voy a la
+        red si no está guardado. Se llena en install y también al usarlo.
+
+   4) CACHÉ DE PÁGINAS · método NETWORK FIRST (con tiempo límite)
+      - Es el caché "ia-cbtis260-paginas-vX".
+      - Cada vez que se abre una página HTML intento traer la versión
+        más nueva de la red. Si la red tarda más de TIEMPO_RED o no hay
+        Internet, uso la última copia guardada.
+
+   5) CACHÉ DE IMÁGENES · método CACHE FIRST CON CADUCIDAD
+      - Es el caché "ia-cbtis260-imagenes-vX".
+      - Guarda las imágenes que NO están en la lista inicial (por ejemplo
+        las que se suben desde PHP). Cada copia lleva su fecha y caduca a
+        los DIAS_IMAGENES días; además hay un máximo de LIMITE_IMAGENES.
+
+   6) FALLBACK OFFLINE
       - Si no hay Internet y el archivo no está en ningún caché,
         se muestra offline.html (o index.html si es una navegación).
    ===================================================================== */
 
 // Versión del service worker. Cada vez que cambie mis archivos subo el número
 // (v4, v5...) para que la app instalada descargue lo nuevo y borre lo viejo.
-const VERSION = "v4";
+const VERSION = "v5";
 
 // Nombre del caché ESTÁTICO (memoria caché): los archivos de mi app.
 const CACHE_ESTATICO = "ia-cbtis260-estatico-" + VERSION;
 
 // Nombre del caché DINÁMICO (API Cache): lo que se guarda al navegar.
 const CACHE_DINAMICO = "ia-cbtis260-dinamico-" + VERSION;
+
+// Nombre del caché del MODELO (método 3: Cache First).
+const CACHE_MODELO = "ia-cbtis260-modelo-" + VERSION;
+
+// Nombre del caché de PÁGINAS (método 4: Network First).
+const CACHE_PAGINAS = "ia-cbtis260-paginas-" + VERSION;
+
+// Nombre del caché de IMÁGENES (método 5: Cache First con caducidad).
+const CACHE_IMAGENES = "ia-cbtis260-imagenes-" + VERSION;
+
+// Lista de todos los cachés de esta versión (los demás se borran en activate).
+const CACHES_ACTUALES = [CACHE_ESTATICO, CACHE_DINAMICO, CACHE_MODELO, CACHE_PAGINAS, CACHE_IMAGENES];
+
+// Milisegundos que espero a la red antes de usar la copia guardada (Network First).
+const TIEMPO_RED = 3500;
+
+// Días que puede vivir una imagen en el caché de imágenes y máximo de imágenes.
+const DIAS_IMAGENES = 7;
+const LIMITE_IMAGENES = 30;
+
+// Archivos del modelo y de las bibliotecas que guardo en CACHE_MODELO.
+const ARCHIVOS_MODELO = [
+    "./modelo/model.json", // Estructura de la red neuronal.
+    "./modelo/metadata.json", // Nombres de las clases (kinberly / no_kinberly).
+    "./modelo/weights.bin", // Pesos entrenados del modelo.
+    "./lib/tf.min.js", // TensorFlow.js.
+    "./lib/teachablemachine-image.min.js" // Biblioteca de Teachable Machine.
+];
 
 // Máximo de archivos que permito en el caché dinámico.
 // Cuando se pasa, borro los más antiguos (el primero que entró es el primero que sale).
@@ -67,6 +114,9 @@ const ARCHIVOS = [
     "./cache-panel.js", // Guardo el JavaScript del panel que muestra el caché.
     "./offline.html", // Guardo la página que se muestra si no hay conexión y la página pedida no está guardada.
     "./paginas/cache.html", // Guardo la página donde documento el caché.
+    "./paginas/modelo.html", // Guardo la página donde se usa el modelo de IA.
+    "./modelo.js", // Guardo el JavaScript de la página del modelo.
+    "./estilos/modelo.css", // Guardo los estilos de la página del modelo.
     "./estilos/cache.css", // Guardo la hoja de estilos de la página del caché.
     "./glosario.js", // Guardo el JavaScript de la lógica del glosario.
     "./glosario-datos.js", // Guardo el JavaScript de los datos del glosario.
@@ -116,6 +166,84 @@ async function guardarDinamico(peticion, respuesta) {
 }
 
 // ---------------------------------------------------------------------
+// MÉTODO 3 · CACHE FIRST  → caché del MODELO
+// 1. Busco en el caché. 2. Si está, lo entrego (sin gastar Internet).
+// 3. Si no está, lo pido a la red y guardo una copia para la próxima vez.
+// ---------------------------------------------------------------------
+async function cacheFirstModelo(peticion) {
+    const cache = await caches.open(CACHE_MODELO);
+    const guardado = await cache.match(peticion, { ignoreSearch: true });
+    if (guardado) return guardado;
+
+    const respuesta = await fetch(peticion);
+    if (respuesta.ok) await cache.put(peticion, respuesta.clone());
+    return respuesta;
+}
+
+// ---------------------------------------------------------------------
+// MÉTODO 4 · NETWORK FIRST  → caché de PÁGINAS
+// 1. Pido la página a la red (así siempre veo lo más nuevo).
+// 2. Si la red responde a tiempo, guardo una copia y la entrego.
+// 3. Si falla o tarda más de TIEMPO_RED, entrego la última copia guardada.
+// ---------------------------------------------------------------------
+async function networkFirstPaginas(peticion) {
+    const cache = await caches.open(CACHE_PAGINAS);
+
+    const desdeRed = fetch(peticion).then(async respuesta => {
+        if (respuesta.ok) await cache.put(peticion, respuesta.clone());
+        return respuesta;
+    });
+
+    // Una promesa que se rechaza si la red tarda demasiado.
+    const limite = new Promise((_, rechazar) => setTimeout(() => rechazar(new Error("tiempo")), TIEMPO_RED));
+
+    try {
+        return await Promise.race([desdeRed, limite]);
+    } catch (error) {
+        desdeRed.catch(() => {}); // Que termine en segundo plano sin hacer ruido.
+        const copia = await cache.match(peticion)
+            || await caches.match(peticion, { ignoreSearch: true })
+            || await caches.match("./index.html")
+            || await caches.match(PAGINA_OFFLINE);
+        if (copia) return copia;
+        return desdeRed; // Último intento: esperar a la red.
+    }
+}
+
+// ---------------------------------------------------------------------
+// MÉTODO 5 · CACHE FIRST CON CADUCIDAD  → caché de IMÁGENES
+// Cada imagen se guarda con una cabecera "sw-fecha" (cuándo se guardó).
+// Si la copia tiene más de DIAS_IMAGENES días la considero vencida: la borro
+// y pido una nueva. Si no hay Internet, prefiero una vencida a no mostrar nada.
+// ---------------------------------------------------------------------
+async function cacheFirstImagenes(peticion) {
+    const cache = await caches.open(CACHE_IMAGENES);
+    const guardado = await cache.match(peticion);
+
+    if (guardado) {
+        const fecha = Number(guardado.headers.get("sw-fecha")) || 0;
+        const edad = Date.now() - fecha;
+        if (edad < DIAS_IMAGENES * 24 * 60 * 60 * 1000) return guardado; // Todavía vigente.
+    }
+
+    try {
+        const respuesta = await fetch(peticion);
+        if (respuesta.ok) {
+            // Copio la respuesta y le agrego la cabecera con la fecha de hoy.
+            const cuerpo = await respuesta.clone().blob();
+            const cabeceras = new Headers(respuesta.headers);
+            cabeceras.set("sw-fecha", String(Date.now()));
+            await cache.put(peticion, new Response(cuerpo, { status: 200, headers: cabeceras }));
+            limitarCache(CACHE_IMAGENES, LIMITE_IMAGENES);
+        }
+        return respuesta;
+    } catch (error) {
+        if (guardado) return guardado;          // Sin red: uso la vencida.
+        return caches.match(PAGINA_OFFLINE);
+    }
+}
+
+// ---------------------------------------------------------------------
 // EVENTO INSTALL → aquí se crea la MEMORIA CACHÉ (caché estático)
 // ---------------------------------------------------------------------
 self.addEventListener("install", event => {
@@ -124,11 +252,18 @@ self.addEventListener("install", event => {
     self.skipWaiting();
 
     event.waitUntil(
-        // caches.open() abre (o crea) el caché con el nombre indicado.
-        caches.open(CACHE_ESTATICO).then(cache => {
-            // cache.addAll() descarga y guarda todos los archivos de mi lista.
-            return cache.addAll(ARCHIVOS);
-        })
+        Promise.all([
+            // caches.open() abre (o crea) el caché con el nombre indicado.
+            caches.open(CACHE_ESTATICO).then(cache => {
+                // cache.addAll() descarga y guarda todos los archivos de mi lista.
+                return cache.addAll(ARCHIVOS);
+            }),
+            // También dejo guardado el modelo (Cache First). Si falla no cancelo la
+            // instalación: el modelo se guardará la primera vez que se use.
+            caches.open(CACHE_MODELO).then(cache => {
+                return cache.addAll(ARCHIVOS_MODELO).catch(() => {});
+            })
+        ])
     );
 });
 
@@ -141,8 +276,8 @@ self.addEventListener("activate", event => {
         caches.keys().then(claves => {
             return Promise.all(
                 claves
-                    // Conservo solo los dos cachés de la versión actual.
-                    .filter(clave => clave !== CACHE_ESTATICO && clave !== CACHE_DINAMICO)
+                    // Conservo solo los cinco cachés de la versión actual.
+                    .filter(clave => !CACHES_ACTUALES.includes(clave))
                     // caches.delete() elimina por completo un caché viejo.
                     .map(clave => caches.delete(clave))
             );
@@ -169,6 +304,30 @@ self.addEventListener("fetch", event => {
     if (!url.protocol.startsWith("http")) return;
 
     const esMismoSitio = url.origin === location.origin;
+
+    // ----- MÉTODO 3 · Cache First: el modelo y las bibliotecas -----
+    if (esMismoSitio && (url.pathname.includes("/modelo/") || url.pathname.includes("/lib/"))) {
+        event.respondWith(
+            cacheFirstModelo(peticion).catch(() => caches.match(PAGINA_OFFLINE))
+        );
+        return;
+    }
+
+    // ----- MÉTODO 4 · Network First: las páginas HTML que se abren -----
+    if (esMismoSitio && peticion.mode === "navigate") {
+        event.respondWith(networkFirstPaginas(peticion));
+        return;
+    }
+
+    // ----- MÉTODO 5 · Cache First con caducidad: imágenes que NO están en mi lista -----
+    if (esMismoSitio && peticion.destination === "image") {
+        event.respondWith(
+            caches.open(CACHE_ESTATICO)
+                .then(estatico => estatico.match(peticion))
+                .then(yaEnLista => yaEnLista || cacheFirstImagenes(peticion))
+        );
+        return;
+    }
 
     // ----- Archivos de MI sitio: STALE-WHILE-REVALIDATE -----
     // 1. Busco en el caché (caches.match busca en TODOS los cachés).
@@ -229,6 +388,9 @@ self.addEventListener("fetch", event => {
 // EVENTO MESSAGE → la página le puede mandar órdenes al service worker
 //   { accion: "LIMPIAR_DINAMICO" }  → vacía solo el caché dinámico
 //   { accion: "LIMPIAR_TODO" }      → borra todos los cachés de la app
+//   { accion: "LIMPIAR_MODELO" }    → vacía el caché del modelo
+//   { accion: "LIMPIAR_PAGINAS" }   → vacía el caché de páginas
+//   { accion: "LIMPIAR_IMAGENES" }  → vacía el caché de imágenes
 //   { accion: "ACTIVAR" }           → activa de inmediato una versión nueva
 // ---------------------------------------------------------------------
 self.addEventListener("message", event => {
@@ -236,6 +398,15 @@ self.addEventListener("message", event => {
 
     if (orden === "LIMPIAR_DINAMICO") {
         event.waitUntil(caches.delete(CACHE_DINAMICO));
+    }
+    if (orden === "LIMPIAR_MODELO") {
+        event.waitUntil(caches.delete(CACHE_MODELO));
+    }
+    if (orden === "LIMPIAR_PAGINAS") {
+        event.waitUntil(caches.delete(CACHE_PAGINAS));
+    }
+    if (orden === "LIMPIAR_IMAGENES") {
+        event.waitUntil(caches.delete(CACHE_IMAGENES));
     }
     if (orden === "LIMPIAR_TODO") {
         event.waitUntil(

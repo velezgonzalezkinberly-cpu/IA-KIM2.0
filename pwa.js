@@ -1,9 +1,12 @@
 /* =========================================================
    pwa.js · Registro del Service Worker y detalles de la PWA
    Este archivo está en la raíz, junto a index.html y manifest.json.
-   El service worker que se registra aquí crea dos cachés:
-     · Memoria caché (estático): ia-cbtis260-estatico-vX
-     · API Cache (dinámico):     ia-cbtis260-dinamico-vX
+   El service worker que se registra aquí crea cinco cachés:
+     · Memoria caché (estático):  ia-cbtis260-estatico-vX   (stale-while-revalidate)
+     · API Cache (dinámico):      ia-cbtis260-dinamico-vX   (cache first / put)
+     · Caché del modelo:          ia-cbtis260-modelo-vX     (cache first)
+     · Caché de páginas:          ia-cbtis260-paginas-vX    (network first)
+     · Caché de imágenes:         ia-cbtis260-imagenes-vX   (cache first con caducidad)
    La explicación completa está en DOCUMENTACION-CACHE.md.
    ========================================================= */
 (function () {

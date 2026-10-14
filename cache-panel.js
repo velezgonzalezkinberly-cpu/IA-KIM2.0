@@ -23,6 +23,9 @@
     // Prefijos con los que el service worker nombra sus cachés.
     const PREFIJO_ESTATICO = "ia-cbtis260-estatico-";
     const PREFIJO_DINAMICO = "ia-cbtis260-dinamico-";
+    const PREFIJO_MODELO = "ia-cbtis260-modelo-";
+    const PREFIJO_PAGINAS = "ia-cbtis260-paginas-";
+    const PREFIJO_IMAGENES = "ia-cbtis260-imagenes-";
     const CLAVE_DEMO = "./api-cache-demo.json"; // Clave ficticia para la demostración.
 
     function log(texto) { salida.textContent = texto; }
@@ -36,7 +39,7 @@
     // Devuelve el nombre del caché dinámico actual (o uno nuevo si aún no existe).
     async function nombreDinamico() {
         const claves = await caches.keys();
-        return claves.find(c => c.startsWith(PREFIJO_DINAMICO)) || PREFIJO_DINAMICO + "v4";
+        return claves.find(c => c.startsWith(PREFIJO_DINAMICO)) || PREFIJO_DINAMICO + "v5";
     }
 
     // Dibuja la lista de cachés con sus archivos.
@@ -53,12 +56,17 @@
         for (const nombre of nombres) {
             const cache = await caches.open(nombre);
             const archivos = await cache.keys();
-            const dinamico = nombre.startsWith(PREFIJO_DINAMICO);
+            // Etiqueta que explica qué método usa cada caché.
+            let tipo = "otro";
+            if (nombre.startsWith(PREFIJO_ESTATICO)) tipo = "Memoria caché (estático)";
+            else if (nombre.startsWith(PREFIJO_DINAMICO)) tipo = "API Cache (dinámico)";
+            else if (nombre.startsWith(PREFIJO_MODELO)) tipo = "Caché del modelo · Cache First";
+            else if (nombre.startsWith(PREFIJO_PAGINAS)) tipo = "Caché de páginas · Network First";
+            else if (nombre.startsWith(PREFIJO_IMAGENES)) tipo = "Caché de imágenes · Cache First con caducidad";
 
             const detalle = document.createElement("details");
             const resumen = document.createElement("summary");
-            resumen.textContent = nombre + " · " + archivos.length + " archivos · " +
-                (dinamico ? "API Cache (dinámico)" : nombre.startsWith(PREFIJO_ESTATICO) ? "Memoria caché (estático)" : "otro");
+            resumen.textContent = nombre + " · " + archivos.length + " archivos · " + tipo;
             detalle.appendChild(resumen);
 
             const ul = document.createElement("ul");
