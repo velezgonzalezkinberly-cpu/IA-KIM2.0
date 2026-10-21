@@ -40,14 +40,20 @@
         las que se suben desde PHP). Cada copia lleva su fecha y caduca a
         los DIAS_IMAGENES días; además hay un máximo de LIMITE_IMAGENES.
 
-   6) FALLBACK OFFLINE
+   6) CACHÉ DE LA API · método NETWORK FIRST CON CADUCIDAD
+      - Es el caché "ia-cbtis260-api-vX". Guarda las respuestas de api/*.php
+        (algoritmos de búsqueda). Con Internet SIEMPRE se muestran datos nuevos;
+        sin Internet (o si el servidor falla) se usa la última copia de hasta
+        DIAS_API días y la página avisa que son datos guardados.
+
+   7) FALLBACK OFFLINE
       - Si no hay Internet y el archivo no está en ningún caché,
         se muestra offline.html (o index.html si es una navegación).
    ===================================================================== */
 
 // Versión del service worker. Cada vez que cambie mis archivos subo el número
 // (v4, v5...) para que la app instalada descargue lo nuevo y borre lo viejo.
-const VERSION = "v5";
+const VERSION = "v6";
 
 // Nombre del caché ESTÁTICO (memoria caché): los archivos de mi app.
 const CACHE_ESTATICO = "ia-cbtis260-estatico-" + VERSION;
@@ -64,8 +70,16 @@ const CACHE_PAGINAS = "ia-cbtis260-paginas-" + VERSION;
 // Nombre del caché de IMÁGENES (método 5: Cache First con caducidad).
 const CACHE_IMAGENES = "ia-cbtis260-imagenes-" + VERSION;
 
+// Nombre del caché de la API de algoritmos (método 6: Network First con caducidad).
+const CACHE_API = "ia-cbtis260-api-" + VERSION;
+
 // Lista de todos los cachés de esta versión (los demás se borran en activate).
-const CACHES_ACTUALES = [CACHE_ESTATICO, CACHE_DINAMICO, CACHE_MODELO, CACHE_PAGINAS, CACHE_IMAGENES];
+const CACHES_ACTUALES = [CACHE_ESTATICO, CACHE_DINAMICO, CACHE_MODELO, CACHE_PAGINAS, CACHE_IMAGENES, CACHE_API];
+
+// Caché de la API: tiempo máximo de espera a la red, días que una copia sirve sin conexión y máximo de respuestas.
+const TIEMPO_API = 4000;
+const DIAS_API = 7;
+const LIMITE_API = 30;
 
 // Milisegundos que espero a la red antes de usar la copia guardada (Network First).
 const TIEMPO_RED = 3500;
@@ -88,7 +102,7 @@ const ARCHIVOS_MODELO = [
 const LIMITE_DINAMICO = 40;
 
 // Página de respaldo para cuando no hay Internet y no encuentro nada guardado.
-const PAGINA_OFFLINE = "./offline.html";
+const PAGINA_OFFLINE = "./paginas/offline.html";
 
 const ARCHIVOS = [
     "./", // Indico la carpeta principal de mi sitio.
@@ -109,17 +123,20 @@ const ARCHIVOS = [
     "./estilos/estilos.css", // Guardo mi hoja de estilos estilos.css.
     "./estilos/escuchar.css", // Guardo mi hoja de estilos escuchar.css.
     "./estilos/glosario.css", // Guardo mi hoja de estilos glosario.css.
-    "./escuchar.js", // Guardo el JavaScript de el lector en voz alta.
-    "./pwa.js", // Guardo el JavaScript de el registro de la PWA.
-    "./cache-panel.js", // Guardo el JavaScript del panel que muestra el caché.
-    "./offline.html", // Guardo la página que se muestra si no hay conexión y la página pedida no está guardada.
+    "./js/escuchar.js", // Guardo el JavaScript de el lector en voz alta.
+    "./js/pwa.js", // Guardo el JavaScript de el registro de la PWA.
+    "./js/cache-panel.js", // Guardo el JavaScript del panel que muestra el caché.
+    "./paginas/offline.html", // Guardo la página que se muestra si no hay conexión y la página pedida no está guardada.
     "./paginas/cache.html", // Guardo la página donde documento el caché.
     "./paginas/modelo.html", // Guardo la página donde se usa el modelo de IA.
-    "./modelo.js", // Guardo el JavaScript de la página del modelo.
+    "./paginas/algoritmos.html", // Guardo la página de algoritmos de búsqueda (los datos vienen de la API, no de aquí).
+    "./js/algoritmos.js", // Guardo el JavaScript de la sección de algoritmos de búsqueda.
+    "./estilos/algoritmos.css", // Guardo los estilos de la sección de algoritmos de búsqueda.
+    "./js/modelo.js", // Guardo el JavaScript de la página del modelo.
     "./estilos/modelo.css", // Guardo los estilos de la página del modelo.
     "./estilos/cache.css", // Guardo la hoja de estilos de la página del caché.
-    "./glosario.js", // Guardo el JavaScript de la lógica del glosario.
-    "./glosario-datos.js", // Guardo el JavaScript de los datos del glosario.
+    "./js/glosario.js", // Guardo el JavaScript de la lógica del glosario.
+    "./js/glosario-datos.js", // Guardo el JavaScript de los datos del glosario.
     "./imagenes/logo-cbtis260.png", // Guardo el logo de mi sitio.
     "./imagenes/glosario/concepto-01.jpg", // Imagen 1 del glosario.
     "./imagenes/glosario/concepto-02.jpg", // Imagen 2 del glosario.
@@ -244,6 +261,59 @@ async function cacheFirstImagenes(peticion) {
 }
 
 // ---------------------------------------------------------------------
+// MÉTODO 6 · NETWORK FIRST CON CADUCIDAD  → caché de la API de algoritmos
+// 1. Siempre pido los datos a la red (así nunca se ven datos viejos si hay Internet).
+// 2. Si la red responde bien, guardo una copia con su fecha ("sw-fecha").
+// 3. Si no hay red, tarda más de TIEMPO_API o el servidor falla (error 5xx),
+//    entrego la última copia guardada SI tiene menos de DIAS_API días y le pongo
+//    la cabecera "X-Desde-Cache: 1" para que la página avise que son datos guardados.
+// 4. Si no hay copia, respondo un JSON de error "sin_conexion" (la página lo muestra).
+// Solo se guardan respuestas GET correctas (200); los errores 4xx/5xx nunca se cachean.
+// ---------------------------------------------------------------------
+async function copiaDeApi(cache, peticion) {
+    const guardada = await cache.match(peticion);
+    if (!guardada) return null;
+    const fecha = Number(guardada.headers.get("sw-fecha")) || 0;
+    if (Date.now() - fecha > DIAS_API * 24 * 60 * 60 * 1000) {   // demasiado vieja: no la uso
+        await cache.delete(peticion);
+        return null;
+    }
+    const cabeceras = new Headers(guardada.headers);
+    cabeceras.set("X-Desde-Cache", "1");
+    return new Response(await guardada.blob(), { status: 200, statusText: "OK", headers: cabeceras });
+}
+
+async function networkFirstApi(peticion) {
+    const cache = await caches.open(CACHE_API);
+    try {
+        const limite = new Promise((_, rechazar) => setTimeout(() => rechazar(new Error("tiempo")), TIEMPO_API));
+        const respuesta = await Promise.race([fetch(peticion), limite]);
+
+        if (respuesta.ok) {
+            const cuerpo = await respuesta.clone().blob();
+            const cabeceras = new Headers(respuesta.headers);
+            cabeceras.set("sw-fecha", String(Date.now()));
+            await cache.put(peticion, new Response(cuerpo, { status: 200, headers: cabeceras }));
+            limitarCache(CACHE_API, LIMITE_API);
+            return respuesta;
+        }
+        // El servidor respondió con error (por ejemplo la base de datos se cayó): si hay copia reciente, la uso.
+        if (respuesta.status >= 500) {
+            const copia = await copiaDeApi(cache, peticion);
+            if (copia) return copia;
+        }
+        return respuesta;   // 4xx u otro error sin copia: se entrega tal cual
+    } catch (error) {
+        const copia = await copiaDeApi(cache, peticion);
+        if (copia) return copia;
+        return new Response(JSON.stringify({
+            ok: false,
+            error: { codigo: "sin_conexion", mensaje: "No hay conexión y no hay datos guardados." }
+        }), { status: 503, headers: { "Content-Type": "application/json; charset=utf-8" } });
+    }
+}
+
+// ---------------------------------------------------------------------
 // EVENTO INSTALL → aquí se crea la MEMORIA CACHÉ (caché estático)
 // ---------------------------------------------------------------------
 self.addEventListener("install", event => {
@@ -302,6 +372,12 @@ self.addEventListener("fetch", event => {
 
     // Solo http/https (ignoro chrome-extension:// y similares).
     if (!url.protocol.startsWith("http")) return;
+
+    // ----- MÉTODO 6 · Network First con caducidad: la API de algoritmos (carpeta api/) -----
+    if (url.origin === location.origin && url.pathname.includes("/api/")) {
+        event.respondWith(networkFirstApi(peticion));
+        return;
+    }
 
     const esMismoSitio = url.origin === location.origin;
 
@@ -391,6 +467,7 @@ self.addEventListener("fetch", event => {
 //   { accion: "LIMPIAR_MODELO" }    → vacía el caché del modelo
 //   { accion: "LIMPIAR_PAGINAS" }   → vacía el caché de páginas
 //   { accion: "LIMPIAR_IMAGENES" }  → vacía el caché de imágenes
+//   { accion: "LIMPIAR_API" }       → vacía el caché de la API de algoritmos
 //   { accion: "ACTIVAR" }           → activa de inmediato una versión nueva
 // ---------------------------------------------------------------------
 self.addEventListener("message", event => {
@@ -404,6 +481,9 @@ self.addEventListener("message", event => {
     }
     if (orden === "LIMPIAR_PAGINAS") {
         event.waitUntil(caches.delete(CACHE_PAGINAS));
+    }
+    if (orden === "LIMPIAR_API") {
+        event.waitUntil(caches.delete(CACHE_API));
     }
     if (orden === "LIMPIAR_IMAGENES") {
         event.waitUntil(caches.delete(CACHE_IMAGENES));

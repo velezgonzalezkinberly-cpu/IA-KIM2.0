@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algoritmos de búsqueda | Inteligencia Artificial · CBTIS 260</title>
+    <meta name="description" content="Catálogo de algoritmos de búsqueda consultado desde una base de datos MySQL mediante una API en PHP.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../estilos/estilos.css">
+    <link rel="stylesheet" href="../estilos/escuchar.css">
+    <link rel="stylesheet" href="../estilos/algoritmos.css">
+    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#241242">
+    <link rel="icon" href="../imagenes/logo-cbtis260.png">
+</head>
+<body>
+
+    <!-- ENCABEZADO -->
+    <header>
+        <div class="encabezado">
+            <img class="logo-marca" src="../imagenes/logo-cbtis260.png" alt="Logo CBTIS 260" width="68" height="68">
+            <div>
+                <h1>Inteligencia Artificial</h1>
+                <p class="subt">Centro de Bachillerato Tecnológico Industrial y de Servicios No. 260</p>
+                <p class="lema">Educación tecnológica para transformar el futuro</p>
+            </div>
+        </div>
+
+        <nav>
+            <input type="checkbox" id="nav-toggle" class="nav-toggle">
+            <label for="nav-toggle" class="hamburger">☰ Menú</label>
+
+            <div class="nav-lista">
+                <a href="../index.html">🏠 Inicio</a>
+
+                <div class="menu">
+                    <span class="menu-etiqueta">🤖 Tema IA</span>
+                    <div class="submenu">
+                        <a href="que-es.html">¿Qué es la IA?</a>
+                        <a href="tipos.html">Tipos de IA</a>
+                        <a href="antecedentes.html">Antecedentes</a>
+                        <a href="aplicaciones.html">Aplicaciones</a>
+                        <a href="ventajas.html">Ventajas</a>
+                        <a href="desventajas.html">Desventajas</a>
+                        <a href="impacto.html">Impacto</a>
+                        <a href="consecuencias.html">Consecuencias</a>
+                        <a href="etica.html">Ética y retos</a>
+                        <a href="programacion.html">Programación</a>
+                    </div>
+                </div>
+
+                <a href="glosario.html">📚 Glosario</a>
+                <a href="video.html">🎥 Video</a>
+                <a href="modelo.html">🧠 Modelo</a>
+                <a href="algoritmos.html" class="activo">🔎 Algoritmos de búsqueda</a>
+                <a href="contacto.html">ℹ️ Información</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+
+        <section class="banner">
+            <div class="contenedor">
+                <svg class="icono-banner" viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+                    <circle cx="27" cy="27" r="15"/><path d="M38 38l16 16"/><path d="M20 27h14M27 20v14"/>
+                </svg>
+                <div>
+                    <h2>Algoritmos de búsqueda</h2>
+                    <p>Catálogo guardado en una base de datos MySQL y consultado en vivo desde la PWA mediante una API en PHP.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="seccion" id="alg-app">
+            <p>
+                Busca por nombre o por código (por ejemplo <em>binaria</em> o <em>ALG-05</em>) y filtra por clasificación.
+                Toca <strong>Ver detalles</strong> para conocer su complejidad y sus observaciones.
+            </p>
+
+            <div class="alg-herramientas" data-no-leer>
+                <label class="alg-buscar">
+                    <span aria-hidden="true">🔎</span>
+                    <input type="search" id="alg-q" placeholder="Buscar por nombre o código…" aria-label="Buscar algoritmo por nombre o código" maxlength="100" autocomplete="off">
+                </label>
+                <label class="alg-filtro">
+                    <span class="alg-filtro-rotulo">Clasificación</span>
+                    <select id="alg-clasificacion" aria-label="Filtrar por clasificación">
+                        <option value="">Todas las clasificaciones</option>
+                    </select>
+                </label>
+                <button class="boton suave" type="button" id="alg-recargar">↻ Actualizar</button>
+            </div>
+
+            <div id="alg-aviso-guardado" class="aviso alerta" role="status" hidden></div>
+            <div id="alg-error" class="aviso error" role="alert" hidden>
+                <span id="alg-error-texto"></span>
+                <button class="boton-mini" type="button" id="alg-reintentar" data-no-leer>Reintentar</button>
+            </div>
+
+            <p class="alg-contador" id="alg-contador" aria-live="polite" data-no-leer></p>
+
+            <div id="alg-cargando" class="alg-cargando" role="status" hidden>
+                <span class="alg-spinner" aria-hidden="true"></span> Consultando la base de datos…
+            </div>
+
+            <div class="alg-tabla-caja" id="alg-tabla-caja" hidden>
+                <table class="alg-tabla">
+                    <caption class="alg-solo-lectores">Algoritmos de búsqueda</caption>
+                    <thead><tr><th scope="col">ID</th><th scope="col">Nombre del algoritmo</th><th scope="col">Clasificación</th><th scope="col">Descripción</th></tr></thead>
+                    <tbody id="alg-tbody"></tbody>
+                </table>
+            </div>
+
+            <p class="alg-vacio" id="alg-vacio" hidden>No encontré algoritmos con esos criterios. Prueba con otra palabra o quita el filtro 🙂</p>
+        </section>
+
+    </main>
+
+    <div class="paginacion">
+        <a class="anterior" href="modelo.html"><span class="rotulo">← Anterior</span><span class="destino">Modelo</span></a>
+        <a class="siguiente" href="contacto.html"><span class="rotulo">Siguiente →</span><span class="destino">Información</span></a>
+    </div>
+
+    <!-- PIE DE PÁGINA -->
+    <footer>
+        <p>© CBTIS 260</p>
+        <p>Kinberly Vélez González</p>
+        <div class="redes">
+            <a href="mailto:velezgonzalezkinberly@gmail.com" aria-label="Gmail: velezgonzalezkinberly" title="Gmail" class="red-gmail">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7l8.5 6.5L20.5 7"/></svg>
+            </a>
+            <a href="https://www.instagram.com/kim_gvglz/" target="_blank" rel="noopener" aria-label="Instagram: kim_gvglz" title="Instagram" class="red-instagram">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>
+            </a>
+        </div>
+    </footer>
+
+    <script src="../js/escuchar.js"></script>
+    <script src="../js/algoritmos.js"></script>
+    <script src="../js/pwa.js"></script>
+</body>
+</html>

@@ -11,6 +11,6 @@
             </a>
         </div>
     </footer>
-    <script src="../escuchar.js"></script>
+    <script src="../js/escuchar.js"></script>
 </body>
 </html>

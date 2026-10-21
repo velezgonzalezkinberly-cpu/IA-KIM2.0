@@ -32,6 +32,7 @@
                 <a href="index.php" class="<?= ($pagina ?? '') === 'lista' ? 'activo' : '' ?>">🗄️ Glosario (BD)</a>
                 <a href="agregar.php" class="<?= ($pagina ?? '') === 'agregar' ? 'activo' : '' ?>">＋ Agregar término</a>
                 <a href="../paginas/glosario.html">📚 Glosario de la PWA</a>
+                <a href="../paginas/algoritmos.html">🔎 Algoritmos de búsqueda</a>
             </div>
         </nav>
     </header>

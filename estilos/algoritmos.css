@@ -1,0 +1,97 @@
+/* =========================================================
+   ALGORITMOS DE BÚSQUEDA · estilos de la sección (paginas/algoritmos.html)
+   Usa las variables de estilos.css (colores, radios, sombras).
+   ========================================================= */
+
+.alg-herramientas { display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center; margin: 0 0 1.2rem; }
+.alg-buscar {
+  flex: 2 1 260px; display: flex; align-items: center; gap: 0.6rem;
+  background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 0.35rem 1rem; box-shadow: var(--sombra);
+}
+.alg-buscar input { flex: 1; min-width: 0; border: 0; outline: 0; font: inherit; color: var(--ink); background: transparent; padding: 0.45rem 0; }
+.alg-buscar:focus-within, .alg-filtro select:focus { border-color: var(--teal); outline: 2px solid var(--teal); outline-offset: 1px; }
+.alg-buscar:focus-within { outline: 0; }
+.alg-filtro { flex: 1 1 230px; display: flex; flex-direction: column; }
+.alg-filtro-rotulo { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.alg-filtro select {
+  font: inherit; color: var(--ink); background: #fff; border: 1px solid var(--line); border-radius: 999px;
+  padding: 0.7rem 1rem; box-shadow: var(--sombra); width: 100%; cursor: pointer;
+}
+
+.boton {
+  display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; text-decoration: none;
+  border: 0; border-radius: 999px; padding: 0.7rem 1.3rem; font: inherit; font-weight: 600; font-size: 0.92rem;
+  background: linear-gradient(135deg, var(--teal), var(--violeta)); color: #fff; box-shadow: var(--sombra);
+  transition: transform 0.15s ease;
+}
+.boton:hover { transform: translateY(-2px); }
+.boton.suave { background: #fff; color: var(--teal-dark); border: 1px solid var(--line); }
+
+.alg-contador { font-size: 0.9rem; color: var(--ink-soft); margin: 0 0 1rem; min-height: 1.4em; }
+
+/* Avisos (error de conexión / datos guardados) */
+.aviso { border-radius: var(--radius-sm); padding: 0.9rem 1.1rem; margin-bottom: 1.2rem; font-size: 0.95rem; max-width: none; }
+.aviso.error { background: #fdecea; color: #912d22; border: 1px solid #f2c0ba; display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center; justify-content: space-between; }
+.aviso.alerta { background: #fff4e0; color: #7a4f0d; border: 1px solid #f0d39c; }
+.aviso[hidden] { display: none; }
+
+/* Indicador de carga */
+.alg-cargando { display: flex; align-items: center; gap: 0.8rem; justify-content: center; padding: 2.5rem 1rem; color: var(--ink-soft); }
+.alg-cargando[hidden] { display: none; }
+.alg-spinner {
+  width: 1.6rem; height: 1.6rem; border-radius: 50%; border: 3px solid var(--line); border-top-color: var(--teal);
+  animation: alg-giro 0.8s linear infinite;
+}
+@keyframes alg-giro { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .alg-spinner { animation-duration: 2.4s; } }
+
+.alg-vacio { text-align: center; padding: 3rem 1rem; color: var(--ink-soft); max-width: none; }
+.alg-solo-lectores { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* Tabla */
+.alg-tabla-caja { background: #fff; border-radius: var(--radius); box-shadow: var(--sombra); border: 1px solid var(--line); overflow: hidden; }
+.alg-tabla-caja[hidden] { display: none; }
+.alg-tabla { width: 100%; border-collapse: collapse; font-size: 0.93rem; }
+.alg-tabla th { background: var(--ink); color: #fff; text-align: left; padding: 0.9rem 1rem; font-weight: 600; }
+.alg-tabla td { padding: 0.9rem 1rem; border-top: 1px solid var(--line); vertical-align: top; color: var(--ink-soft); }
+.alg-tabla tbody tr.alg-fila:nth-of-type(4n+1) td { background: var(--paper); }
+.alg-tabla td.alg-id { font-family: "Fraunces", serif; font-weight: 700; color: var(--amber-dark); white-space: nowrap; }
+.alg-tabla td.alg-nombre { color: var(--ink); font-weight: 600; min-width: 11rem; }
+.alg-etiqueta {
+  display: inline-block; font-size: 0.74rem; font-weight: 600; letter-spacing: 0.03em; color: var(--violeta-dark);
+  background: #f9e6f2; border-radius: 999px; padding: 0.15rem 0.7rem;
+}
+.alg-detalle-boton {
+  margin-top: 0.6rem; display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer; font: inherit; font-size: 0.82rem; font-weight: 600;
+  color: var(--teal-dark); background: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 0.3rem 0.9rem;
+}
+.alg-detalle-boton:hover { background: var(--paper-alt); }
+.alg-detalle-boton[aria-expanded="true"] { background: var(--teal); color: #fff; border-color: var(--teal); }
+
+.alg-fila-detalle td { background: var(--paper-alt); padding: 1rem 1.2rem; }
+.alg-fila-detalle[hidden] { display: none; }
+.alg-detalle { display: grid; gap: 0.8rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
+.alg-detalle h4 { margin: 0 0 0.2rem; font-family: "Fraunces", serif; font-size: 0.95rem; color: var(--teal-dark); }
+.alg-detalle p { margin: 0; font-size: 0.9rem; max-width: none; }
+.alg-detalle .alg-ancho { grid-column: 1 / -1; }
+
+/* Móvil: cada fila se convierte en una tarjeta */
+@media (max-width: 760px) {
+  .alg-herramientas > * { flex: 1 1 100%; }
+  .alg-herramientas .boton { justify-content: center; }
+  .alg-tabla-caja { background: transparent; border: 0; box-shadow: none; overflow: visible; }
+  .alg-tabla, .alg-tabla tbody { display: block; }
+  .alg-tabla thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .alg-tabla tr.alg-fila {
+    display: block; background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+    box-shadow: var(--sombra); margin-bottom: 0.9rem; padding: 0.4rem 0;
+  }
+  .alg-tabla tr.alg-fila td { display: block; border: 0; padding: 0.45rem 1.1rem; background: transparent !important; }
+  .alg-tabla tr.alg-fila td::before {
+    content: attr(data-etiqueta); display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.05em;
+    text-transform: uppercase; color: var(--ink-soft); margin-bottom: 0.1rem; font-family: "Inter", system-ui, sans-serif;
+  }
+  .alg-tabla td.alg-nombre { min-width: 0; font-size: 1.05rem; }
+  .alg-tabla tr.alg-fila-detalle { display: block; margin: -0.5rem 0 0.9rem; border-radius: 0 0 var(--radius) var(--radius); overflow: hidden; }
+  .alg-tabla tr.alg-fila-detalle td { display: block; border-top: 0; border-radius: var(--radius); }
+}

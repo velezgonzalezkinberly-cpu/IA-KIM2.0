@@ -7,7 +7,7 @@
 
 ## 1. ¿Qué se implementó?
 
-La PWA usa **cinco cachés** (cada uno con su propio método) creados con la **Cache API** del navegador:
+La PWA usa **seis cachés** (cada uno con su propio método) creados con la **Cache API** del navegador:
 
 | Caché | Nombre | Qué guarda | Cuándo se llena |
 |---|---|---|---|
@@ -17,6 +17,7 @@ La PWA usa **cinco cachés** (cada uno con su propio método) creados con la **C
 | **Caché del modelo** (método 3) | `ia-cbtis260-modelo-v5` | Modelo de Teachable Machine (`modelo/`) y bibliotecas (`lib/`) | Evento `install` y, si falta algo, al usarlo |
 | **Caché de páginas** (método 4) | `ia-cbtis260-paginas-v5` | Copia de cada página HTML que se abre | Evento `fetch`, cada vez que hay Internet |
 | **Caché de imágenes** (método 5) | `ia-cbtis260-imagenes-v5` | Imágenes que no están en la lista inicial (p. ej. subidas desde PHP) | Evento `fetch`, con fecha y caducidad |
+| **Caché de la API** (método 6) | `ia-cbtis260-api-v6` | Respuestas JSON de `api/*.php` (algoritmos de búsqueda) | Evento `fetch`, solo si la red respondió 200 |
 
 El caché dinámico tiene un límite de **40 archivos** (`LIMITE_DINAMICO`). Al pasarse, se borra el más antiguo.
 
@@ -37,6 +38,7 @@ El caché dinámico tiene un límite de **40 archivos** (`LIMITE_DINAMICO`). Al 
 | **Modelo y bibliotecas** (`modelo/`, `lib/`) | **Cache First** (método 3): busco en `ia-cbtis260-modelo`; si está, lo entrego; si no, lo pido y lo guardo. | El modelo funciona sin Internet |
 | **Páginas HTML** (navegación) | **Network First con tiempo límite** (método 4): pido la página a la red; si falla o tarda más de 3.5 s (`TIEMPO_RED`), uso la última copia guardada. | Siempre se ve lo más nuevo y, sin Internet, lo último visto |
 | **Imágenes fuera de la lista** | **Cache First con caducidad** (método 5): uso la copia si tiene menos de 7 días (`DIAS_IMAGENES`); si venció la vuelvo a pedir (si no hay Internet uso la vencida). Máximo 30 (`LIMITE_IMAGENES`). | Ahorra datos sin guardar imágenes viejas para siempre |
+| **API `api/*.php`** | **Network First con caducidad** (método 6): siempre pido a la red (máx. 4 s). Si hay Internet, nunca se ven datos viejos. Sin Internet o si el servidor falla (5xx), uso la última copia si tiene menos de 7 días (`DIAS_API`) y la marco con la cabecera `X-Desde-Cache: 1`; la página avisa «datos guardados». Los errores 4xx/5xx jamás se guardan. | Funciona sin conexión sin mostrar datos obsoletos en silencio |
 | **Sin Internet y sin copia** | Páginas: `index.html` (o `offline.html`). Otros archivos: `offline.html`. | La app no se queda en blanco |
 | Carpeta `php/` o métodos distintos de GET | **No se interceptan** (necesitan servidor y base de datos; la Cache API no guarda POST). | Sin caché |
 
