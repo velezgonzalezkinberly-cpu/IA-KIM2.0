@@ -53,7 +53,7 @@
 
 // Versión del service worker. Cada vez que cambie mis archivos subo el número
 // (v4, v5...) para que la app instalada descargue lo nuevo y borre lo viejo.
-const VERSION = "v6";
+const VERSION = "v7";
 
 // Nombre del caché ESTÁTICO (memoria caché): los archivos de mi app.
 const CACHE_ESTATICO = "ia-cbtis260-estatico-" + VERSION;
@@ -129,6 +129,14 @@ const ARCHIVOS = [
     "./paginas/offline.html", // Guardo la página que se muestra si no hay conexión y la página pedida no está guardada.
     "./paginas/cache.html", // Guardo la página donde documento el caché.
     "./paginas/modelo.html", // Guardo la página donde se usa el modelo de IA.
+    "./estilos/carrusel.css", // Guardo los estilos del carrusel de imágenes.
+    "./js/carrusel.js", // Guardo el JavaScript del carrusel de imágenes.
+    "./imagenes/carrusel/red-neuronal.svg", // Guardo la ilustración «Redes neuronales» del carrusel.
+    "./imagenes/carrusel/asistente-chatbot.svg", // Guardo la ilustración «Asistentes y chatbots» del carrusel.
+    "./imagenes/carrusel/vision-computadora.svg", // Guardo la ilustración «Visión por computadora» del carrusel.
+    "./imagenes/carrusel/cerebro-circuito.svg", // Guardo la ilustración «Del cerebro a los circuitos» del carrusel.
+    "./imagenes/carrusel/vehiculo-autonomo.svg", // Guardo la ilustración «Vehículos autónomos» del carrusel.
+    "./imagenes/carrusel/reconocimiento-voz.svg", // Guardo la ilustración «Reconocimiento de voz» del carrusel.
     "./paginas/algoritmos.html", // Guardo la página de algoritmos de búsqueda (los datos vienen de la API, no de aquí).
     "./js/algoritmos.js", // Guardo el JavaScript de la sección de algoritmos de búsqueda.
     "./estilos/algoritmos.css", // Guardo los estilos de la sección de algoritmos de búsqueda.

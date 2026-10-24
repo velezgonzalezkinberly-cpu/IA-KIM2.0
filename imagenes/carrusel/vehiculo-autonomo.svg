@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Un auto autónomo con sensores que detectan obstáculos en la carretera">
+<defs>
+<linearGradient id="fondo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#241242"/><stop offset="1" stop-color="#4a2380"/></linearGradient>
+<pattern id="rejilla" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#ffffff" stroke-opacity=".06"/></pattern>
+<linearGradient id="cielo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#241242"/><stop offset="1" stop-color="#b6448f"/></linearGradient></defs>
+<rect width="800" height="450" fill="url(#fondo)"/><rect width="800" height="450" fill="url(#rejilla)"/>
+<rect width="800" height="450" fill="url(#cielo)"/><rect width="800" height="450" fill="url(#rejilla)" fill-opacity=".5"/>
+<circle cx="400" cy="205" r="46" fill="#f2b94f" fill-opacity=".9"/>
+<rect x="0" y="205" width="800" height="245" fill="#2a1650"/>
+<polygon points="360,205 440,205 760,450 40,450" fill="#3d2470"/>
+<g stroke="#f2b94f" stroke-width="6" stroke-linecap="round"><line x1="400" y1="215" x2="400" y2="228"/><line x1="400" y1="248" x2="400" y2="276"/><line x1="400" y1="300" x2="400" y2="350"/></g>
+<line x1="372" y1="205" x2="150" y2="450" stroke="#fff" stroke-opacity=".7" stroke-width="5"/><line x1="428" y1="205" x2="650" y2="450" stroke="#fff" stroke-opacity=".7" stroke-width="5"/>
+<g fill="none" stroke="#f2b94f" stroke-width="4" stroke-linecap="round"><path d="M330 300 A110 110 0 0 1 470 300" stroke-opacity=".9"/><path d="M290 310 A160 160 0 0 1 510 310" stroke-opacity=".6"/><path d="M250 320 A210 210 0 0 1 550 320" stroke-opacity=".35"/></g>
+<g><rect x="338" y="238" width="48" height="40" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="6 4"/><path d="M350 278 v-22 l12 -10 l12 10 v22z" fill="#e9dcf7"/></g>
+<g><rect x="455" y="262" width="40" height="30" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="6 4"/><polygon points="475,268 487,290 463,290" fill="#f2b94f"/></g>
+<g><rect x="325" y="335" width="150" height="82" rx="22" fill="#e9dcf7"/><rect x="342" y="345" width="116" height="34" rx="10" fill="#241242"/>
+<rect x="318" y="388" width="164" height="36" rx="14" fill="#b6448f"/><rect x="332" y="396" width="34" height="14" rx="5" fill="#f2b94f"/><rect x="434" y="396" width="34" height="14" rx="5" fill="#f2b94f"/>
+<rect x="305" y="400" width="26" height="40" rx="8" fill="#150a2b"/><rect x="469" y="400" width="26" height="40" rx="8" fill="#150a2b"/>
+<circle cx="400" cy="330" r="8" fill="#f2b94f"/></g>
+</svg>

@@ -126,7 +126,7 @@ Habilita `.htaccess` para esa carpeta (`AllowOverride All`) y reinicia: `sudo a2
 ### C) Probar que la PWA consulta al servidor
 1. `https://tudominio/…/api/algoritmos.php` → JSON con 14 registros.
 2. Abre la PWA → **Algoritmos de búsqueda** → debe verse la tabla; prueba una búsqueda y un filtro.
-3. DevTools (F12) → *Application* → *Service Workers* (activado) y *Cache Storage* (`ia-cbtis260-api-v6` con respuestas).
+3. DevTools (F12) → *Application* → *Service Workers* (activado) y *Cache Storage* (`ia-cbtis260-api-v7` con respuestas).
 4. Marca *Offline* en DevTools y recarga: debe aparecer el aviso de datos guardados.
 
 ### D) Verificación de seguridad
@@ -151,7 +151,7 @@ Habilita `.htaccess` para esa carpeta (`AllowOverride All`) y reinicia: `sudo a2
 ## 8. Cambios a archivos existentes
 - **Menú:** nueva opción «🔎 Algoritmos de búsqueda» en `index.html`, todas las páginas de `paginas/` y `php/encabezado.php`; tarjeta de acceso rápido en `index.html`.
 - **Rutas rotas (corregidas):** `src="…js"` ahora apunta a `js/` en `index.html`, `paginas/*.html` y `php/pie.php`; `js/pwa.js` registra `../service-worker.js`; `js/modelo.js` busca `../modelo/`; `service-worker.js` y `paginas/offline.html` usan las rutas nuevas.
-- **`service-worker.js`:** versión `v6`, nuevo caché de la API (método 6), nuevos archivos en `ARCHIVOS`, mensaje `LIMPIAR_API`.
+- **`service-worker.js`:** versión `v7`, nuevo caché de la API (método 6), nuevos archivos en `ARCHIVOS`, mensaje `LIMPIAR_API`.
 - **`js/cache-panel.js`:** reconoce el nuevo caché. **`DOCUMENTACION-CACHE.md`:** documenta el método 6.
 - `manifest.json`, estilos existentes y la app `php/` no se modificaron (solo su menú y la ruta del script).
 
@@ -171,3 +171,21 @@ Entorno: PHP 8.3.6 CLI (`php -S`), MariaDB 10.11, Chromium headless con Playwrig
 Para repetirlas: `python3 pruebas/probar_api.py http://localhost/ia-cbtis260` y `python3 pruebas/probar_navegador.py` (necesita `pip install playwright && playwright install chromium`, PHP en el PATH y MySQL encendido con la BD importada).
 
 **Límites honestos:** los `.htaccess` (bloqueo de `config/` y `sql/`) **no se pudieron probar**, porque el servidor integrado de PHP no los usa; compruébalo con la lista de la sección 7-D. el modelo de Teachable Machine y el lector en voz alta no se probaron funcionalmente (solo que sus archivos carguen sin 404). Las fuentes de Google no se pudieron cargar en el entorno de pruebas (sin Internet), por lo que las capturas usan la tipografía de respaldo.
+
+## 10. Extra: carrusel «La IA en imágenes» (JavaScript puro)
+
+Está en la página de inicio (`index.html`), entre la presentación y los datos rápidos.
+
+| Archivo | Para qué |
+|---|---|
+| `js/carrusel.js` | Toda la lógica, sin librerías. |
+| `estilos/carrusel.css` | Estilos con los colores y variables de tu sitio. |
+| `imagenes/carrusel/*.svg` | 6 ilustraciones propias: red neuronal, chatbot, visión por computadora, cerebro y circuitos, auto autónomo y reconocimiento de voz. |
+
+**Qué hace:** flechas y puntos, contador «2 / 6», avance automático cada 5 s con barra de progreso, pausa con el mouse, con el foco o con el botón «Pausar», deslizar con el dedo o el mouse, teclado (← → Inicio Fin), y respeta «reducir movimiento» del sistema (empieza en pausa). Sin JavaScript las imágenes se pueden deslizar igual.
+
+**Personalizar:** para cambiar la velocidad edita `data-intervalo="5000"` (milisegundos) en `index.html`. Para agregar una imagen, copia un bloque `<figure class="car-slide">…</figure>`, pon tu archivo en `imagenes/carrusel/` y agrégalo a la lista `ARCHIVOS` de `service-worker.js` (y sube `VERSION`).
+
+**Service worker:** la versión pasó a `v7` para que los dispositivos que ya tenían la PWA descarguen los archivos nuevos; las imágenes del carrusel quedan en el caché estático y se ven sin conexión.
+
+**Pruebas:** `python3 pruebas/probar_carrusel.py` → 26 / 26 en Chromium headless (controles, teclado, autoplay, pausa, gestos táctiles, móvil de 375 px, reducir movimiento, sin JavaScript, sin errores ni 404). Se repitieron las pruebas anteriores con la versión v7: API 44 / 44 y navegador 31 / 31. No se probó en un teléfono físico.

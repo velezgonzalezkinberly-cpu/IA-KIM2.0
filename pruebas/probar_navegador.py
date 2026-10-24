@@ -82,9 +82,9 @@ with sync_playwright() as p:
     controlado = pag.evaluate("!!navigator.serviceWorker.controller")
     probar("service worker activo y controlando la página", controlado)
     nombres = sorted(pag.evaluate("caches.keys()"))
-    probar("cachés v6 creados (estático, modelo, páginas, API); dinámico e imágenes se crean al necesitarse", len(nombres) >= 4 and all(n.endswith("-v6") for n in nombres), nombres)
+    probar("cachés v7 creados (estático, modelo, páginas, API); dinámico e imágenes se crean al necesitarse", len(nombres) >= 4 and all(n.endswith("-v7") for n in nombres), nombres)
     probar("caché de la API creado", any("-api-" in n for n in nombres))
-    api_guardado = pag.evaluate("caches.open('ia-cbtis260-api-v6').then(c=>c.keys()).then(k=>k.map(r=>new URL(r.url).pathname+new URL(r.url).search))")
+    api_guardado = pag.evaluate("caches.open('ia-cbtis260-api-v7').then(c=>c.keys()).then(k=>k.map(r=>new URL(r.url).pathname+new URL(r.url).search))")
     probar("la API quedó guardada en caché", any("algoritmos.php" in x for x in api_guardado), api_guardado)
     probar("sin banner de 'datos guardados' con Internet", pag.locator("#alg-aviso-guardado").is_hidden())
 

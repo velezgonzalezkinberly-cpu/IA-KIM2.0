@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="estilos/estilos.css">
     <link rel="stylesheet" href="estilos/escuchar.css">
+    <link rel="stylesheet" href="estilos/carrusel.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#241242">
     <link rel="icon" href="imagenes/logo-cbtis260.png">
@@ -112,6 +113,48 @@
     </g>
     <circle cx="260" cy="210" r="11" fill="#e2a13d"/>
 </svg>
+        </section>
+
+        <section class="seccion" style="padding-top:0" aria-labelledby="car-titulo">
+            <h3 id="car-titulo">La IA en imágenes</h3>
+            <div class="carrusel" id="carrusel" data-intervalo="5000" role="region" aria-roledescription="carrusel" aria-label="La IA en imágenes">
+                <div class="car-vista" tabindex="0" aria-label="Imágenes: usa las flechas del teclado para cambiar">
+                    <div class="car-pista">
+                        <figure class="car-slide">
+                            <img src="imagenes/carrusel/red-neuronal.svg" width="800" height="450" alt="Red neuronal artificial con capas de nodos conectados entre sí" fetchpriority="high">
+                            <figcaption><h4>Redes neuronales</h4><p>Capas de nodos conectados que aprenden patrones a partir de ejemplos, inspiradas en cómo se conectan las neuronas del cerebro.</p></figcaption>
+                        </figure>
+                        <figure class="car-slide">
+                            <img src="imagenes/carrusel/asistente-chatbot.svg" width="800" height="450" alt="Un robot asistente conversando con una persona mediante globos de chat">
+                            <figcaption><h4>Asistentes y chatbots</h4><p>Programas que entienden lo que escribes y responden con lenguaje natural, como los asistentes de las apps y los sitios web.</p></figcaption>
+                        </figure>
+                        <figure class="car-slide">
+                            <img src="imagenes/carrusel/vision-computadora.svg" width="800" height="450" alt="Una escena con un árbol y una casa señalados por recuadros de detección">
+                            <figcaption><h4>Visión por computadora</h4><p>La IA aprende a reconocer objetos, personas y lugares en fotos y videos, y te dice qué detectó y con cuánta seguridad.</p></figcaption>
+                        </figure>
+                        <figure class="car-slide">
+                            <img src="imagenes/carrusel/cerebro-circuito.svg" width="800" height="450" alt="Un cerebro conectado a las pistas de un circuito electrónico">
+                            <figcaption><h4>Del cerebro a los circuitos</h4><p>La IA se inspira en cómo piensa el cerebro, pero trabaja con matemáticas, datos y chips electrónicos.</p></figcaption>
+                        </figure>
+                        <figure class="car-slide">
+                            <img src="imagenes/carrusel/vehiculo-autonomo.svg" width="800" height="450" alt="Un auto en la carretera con sensores que detectan obstáculos al frente">
+                            <figcaption><h4>Vehículos autónomos</h4><p>Cámaras y sensores detectan el camino y los obstáculos para ayudar a un auto a manejar con menos intervención humana.</p></figcaption>
+                        </figure>
+                        <figure class="car-slide">
+                            <img src="imagenes/carrusel/reconocimiento-voz.svg" width="800" height="450" alt="Un micrófono con ondas de sonido que se transforman en texto">
+                            <figcaption><h4>Reconocimiento de voz</h4><p>Convierte tu voz en texto y permite pedir cosas a un asistente sin teclear.</p></figcaption>
+                        </figure>
+                    </div>
+                    <button class="car-flecha ant" type="button" aria-label="Imagen anterior" data-no-leer>‹</button>
+                    <button class="car-flecha sig" type="button" aria-label="Imagen siguiente" data-no-leer>›</button>
+                    <div class="car-progreso" aria-hidden="true"></div>
+                </div>
+                <div class="car-barra" data-no-leer>
+                    <button class="car-pausa" type="button" aria-pressed="false">⏸ Pausar</button>
+                    <div class="car-puntos"></div>
+                    <span class="car-contador" aria-hidden="true">1 / 6</span>
+                </div>
+            </div>
         </section>
 
         <section class="seccion" style="padding-top:0">
@@ -227,6 +270,7 @@
     </footer>
 
     <script src="js/escuchar.js"></script>
+    <script src="js/carrusel.js"></script>
     <script src="js/pwa.js"></script>
 </body>
 </html>

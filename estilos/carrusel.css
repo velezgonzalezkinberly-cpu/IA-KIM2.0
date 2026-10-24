@@ -1,0 +1,69 @@
+/* =========================================================
+   CARRUSEL · «La IA en imágenes» (index.html)
+   Sin JavaScript: las imágenes se recorren deslizando (scroll-snap).
+   Con JavaScript (clase .listo): botones, puntos, autoplay y gestos.
+   ========================================================= */
+.carrusel { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--sombra); overflow: hidden; margin-top: 1rem; }
+
+.car-vista { position: relative; overflow-x: auto; scroll-snap-type: x mandatory; touch-action: pan-y; outline-offset: -3px; }
+.car-pista { display: flex; }
+.car-slide { flex: 0 0 100%; margin: 0; scroll-snap-align: start; }
+.car-slide img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: var(--ink); user-select: none; -webkit-user-drag: none; }
+.car-slide figcaption { padding: 1rem 1.4rem 0.6rem; }
+.car-slide h4 { margin: 0 0 0.25rem; font-family: "Fraunces", serif; font-size: 1.2rem; color: var(--ink); }
+.car-slide p { margin: 0; color: var(--ink-soft); max-width: 62ch; }
+
+/* Modo con JavaScript */
+.carrusel.listo .car-vista { overflow: hidden; scroll-snap-type: none; cursor: grab; }
+.carrusel.listo .car-vista:active { cursor: grabbing; }
+.carrusel.listo .car-pista { transition: transform 0.55s cubic-bezier(0.22, 0.8, 0.3, 1); }
+.carrusel.arrastrando .car-pista { transition: none; }
+
+/* Barra de progreso del autoplay (se llena en el tiempo que dura cada imagen) */
+.car-progreso { position: absolute; left: 0; bottom: 0; height: 4px; width: 100%; background: var(--amber); transform-origin: left; transform: scaleX(0); pointer-events: none; display: none; }
+.carrusel.listo .car-progreso { display: block; }
+.car-progreso.corre { animation: car-llenar var(--intervalo, 5000ms) linear forwards; }
+.carrusel.en-pausa .car-progreso { animation-play-state: paused; }
+@keyframes car-llenar { to { transform: scaleX(1); } }
+
+/* Flechas sobre la imagen */
+.car-flecha {
+  display: none; position: absolute; top: 50%; translate: 0 -50%; z-index: 2;
+  width: 2.8rem; height: 2.8rem; border: 0; border-radius: 50%; cursor: pointer;
+  background: rgba(36, 18, 66, 0.72); color: #fff; font-size: 1.3rem; line-height: 1;
+  align-items: center; justify-content: center; backdrop-filter: blur(4px);
+  transition: background 0.15s ease;
+}
+.car-flecha:hover { background: var(--teal); }
+.car-flecha.ant { left: 0.8rem; }
+.car-flecha.sig { right: 0.8rem; }
+.carrusel.listo .car-flecha { display: inline-flex; }
+
+/* Barra inferior: pausa · puntos · contador */
+.car-barra { display: none; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.4rem 1.2rem 1rem; }
+.carrusel.listo .car-barra { display: flex; }
+.car-pausa {
+  display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer; font: inherit; font-size: 0.82rem; font-weight: 600;
+  color: var(--teal-dark); background: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 0.35rem 0.9rem;
+}
+.car-pausa:hover { background: var(--paper-alt); }
+.car-puntos { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
+.car-punto { width: 0.8rem; height: 0.8rem; padding: 0; border-radius: 999px; border: 0; cursor: pointer; background: var(--line); transition: width 0.25s ease, background 0.25s ease; }
+.car-punto:hover { background: var(--teal); }
+.car-punto[aria-current="true"] { width: 2rem; background: var(--violeta); }
+.car-contador { font-size: 0.85rem; color: var(--ink-soft); min-width: 3.2rem; text-align: right; font-variant-numeric: tabular-nums; }
+
+.car-flecha:focus-visible, .car-pausa:focus-visible, .car-punto:focus-visible, .car-vista:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+
+@media (max-width: 640px) {
+  .car-flecha { width: 2.4rem; height: 2.4rem; }
+  .car-slide figcaption { padding: 0.8rem 1rem 0.4rem; }
+  .car-slide h4 { font-size: 1.05rem; }
+  .car-slide p { font-size: 0.92rem; }
+  .car-barra { padding: 0.3rem 1rem 0.9rem; gap: 0.6rem; flex-wrap: wrap; }
+  .car-punto[aria-current="true"] { width: 1.4rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .carrusel.listo .car-pista, .car-punto { transition: none; }
+  .car-progreso { display: none !important; }
+}

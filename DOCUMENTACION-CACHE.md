@@ -17,7 +17,7 @@ La PWA usa **seis cachés** (cada uno con su propio método) creados con la **Ca
 | **Caché del modelo** (método 3) | `ia-cbtis260-modelo-v5` | Modelo de Teachable Machine (`modelo/`) y bibliotecas (`lib/`) | Evento `install` y, si falta algo, al usarlo |
 | **Caché de páginas** (método 4) | `ia-cbtis260-paginas-v5` | Copia de cada página HTML que se abre | Evento `fetch`, cada vez que hay Internet |
 | **Caché de imágenes** (método 5) | `ia-cbtis260-imagenes-v5` | Imágenes que no están en la lista inicial (p. ej. subidas desde PHP) | Evento `fetch`, con fecha y caducidad |
-| **Caché de la API** (método 6) | `ia-cbtis260-api-v6` | Respuestas JSON de `api/*.php` (algoritmos de búsqueda) | Evento `fetch`, solo si la red respondió 200 |
+| **Caché de la API** (método 6) | `ia-cbtis260-api-v7` | Respuestas JSON de `api/*.php` (algoritmos de búsqueda) | Evento `fetch`, solo si la red respondió 200 |
 
 El caché dinámico tiene un límite de **40 archivos** (`LIMITE_DINAMICO`). Al pasarse, se borra el más antiguo.
 
@@ -97,7 +97,7 @@ La página `paginas/cache.html` (enlazada desde el inicio) incluye un panel (`ca
 Cambia en `service-worker.js`:
 
 ```js
-const VERSION = "v5";   // → "v6"
+const VERSION = "v5";   // → "v7"
 ```
 
 Si agregas un archivo nuevo al sitio, añádelo también a la lista `ARCHIVOS`.

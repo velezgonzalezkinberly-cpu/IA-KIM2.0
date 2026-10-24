@@ -40,7 +40,7 @@
     // Devuelve el nombre del caché dinámico actual (o uno nuevo si aún no existe).
     async function nombreDinamico() {
         const claves = await caches.keys();
-        return claves.find(c => c.startsWith(PREFIJO_DINAMICO)) || PREFIJO_DINAMICO + "v6";
+        return claves.find(c => c.startsWith(PREFIJO_DINAMICO)) || PREFIJO_DINAMICO + "v7";
     }
 
     // Dibuja la lista de cachés con sus archivos.
